@@ -1,0 +1,10 @@
+package model;
+
+public  User {
+
+	private String username;
+	private boolean online;   
+	
+	
+	
+}

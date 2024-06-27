@@ -1,0 +1,65 @@
+package server;
+
+import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.*;
+
+import dao.ChatDAO;
+import model.ChatInterface;
+import model.Message;
+import model.PrivateChat;
+import model.User;
+
+import java.net.*;
+
+public class ChatServer extends UnicastRemoteObject implements ChatInterface{
+
+	public static void main(String[] args) throws Exception {
+		(new ChatServer()).iniciarServidor();
+	}
+
+	private static final long serialVersionUID = 9L;
+	private final int PUERTO = 1811;
+
+	public ChatServer() throws RemoteException {
+		}
+
+	public void iniciarServidor() {
+		try {
+			String dirIP = (InetAddress.getLocalHost()).toString();
+			System.out.println("Ecuchando en.. " + dirIP + ":" + PUERTO);
+			Registry registry = LocateRegistry.createRegistry(PUERTO);
+			registry.bind("server", (ChatInterface)this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendMessage(String s) {
+		// do something
+	}
+
+	public String getNombre() {
+		return "roger";
+	}
+
+	public ArrayList<String> getChat() {
+		ChatDAO dao = new ChatDAO();
+
+		return null;
+	}
+
+	@Override
+	public ArrayList<PrivateChat> getPrivateChat(User u) {
+		return null;
+	}
+
+	@Override
+	public void sendMessage(Message m) {
+		ChatDAO dao = new ChatDAO();
+		dao.sendMessage(m);
+	}
+
+}

@@ -1,0 +1,114 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import model.Message;
+import model.PrivateChat;
+import model.User;
+
+public class ChatDAO{
+
+	private Connection con;
+	
+	public ChatDAO() {
+		try {
+			con = DriverManager.getConnection("jdbc:h2:~/chat", "admin", "a");
+		} catch (SQLException e) {
+			System.err.println("La conexión no se pudo establecer. " + e.getMessage());
+		}
+	}
+	
+	public void sendMessage(String message, User transmitter, User receiver) {
+		
+		Date date = new Date();
+		Timestamp timestamp = new Timestamp(date.getTime());
+		
+		try {
+
+			String sqlString = "INSERT INTO CHATS (MESSAGES, SENDER, RECEIVER, DATE) values " + "(?, ?, ?, ?)";
+
+			PreparedStatement statementOb = con.prepareStatement(sqlString);
+			
+			statementOb.setString(1, message);
+			statementOb.setString(2, transmitter.getUsername());
+			statementOb.setString(3, receiver.getUsername());
+			statementOb.setTimestamp(0, null);
+			
+			
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+		}
+	}
+	
+	public ArrayList<PrivateChat> getPrivateChat(User u) {
+		
+		ArrayList<PrivateChat> privateChats = new ArrayList<PrivateChat>();
+		try {
+			Statement statementOb = con.createStatement();
+			ResultSet r = statementOb.executeQuery("SELECT * FROM CHATS WHERE SENDER='"+u.getUsername()+" OR RECEIVER="+u.getUsername()+"' ORDER BY ORDER_IN_CHAT");
+
+				
+			PrivateChat chat = new PrivateChat();
+			
+			while(r.next()) {
+				String sender = r.getString("SENDER");
+				String receiver = r.getString("RECEIVER");
+				String msg = r.getString("MESSAGE");
+				Message m = new Message();
+				
+				m.setSender(new User(sender));
+				chat.setReceiver(new User(receiver));
+				m.setMessage(msg);
+				chat.sendMessage(m);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+		}
+		
+		return privateChats;
+	}
+	
+	public Message getMessage(User receiver) {
+		Message m = null;
+		try {
+			Statement statementOb = con.createStatement();
+			ResultSet r = statementOb.executeQuery("SELECT * FROM CHATS WHERE USERNAME = " + receiver.getUsername() + "ORDER BY ORDER_IN_CHAT");
+			
+			while(r.next()){
+				
+			}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+		}
+		return m;
+	}
+	
+}

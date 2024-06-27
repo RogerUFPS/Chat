@@ -1,0 +1,43 @@
+package model;
+
+import java.util.ArrayList;
+
+public class User {
+
+	private String username;
+	private boolean online;
+	private GroupChat chatGeneral;
+	private ArrayList<PrivateChat> privateChats;
+	
+	public User(String name) {
+		this.username = name;
+		privateChats = new ArrayList<PrivateChat>();
+	}
+	
+	public void addPrivateChat(PrivateChat p) {
+		privateChats.add(p);
+	}
+	
+	public void setChatGeneral(GroupChat c) {
+		chatGeneral = c;
+	}
+	
+	public ArrayList<PrivateChat> getPrivate(){
+		return privateChats;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public boolean isOnline() {
+		return online;
+	}
+	public void setOnline(boolean online) {
+		this.online = online;
+	}
+	
+	
+}

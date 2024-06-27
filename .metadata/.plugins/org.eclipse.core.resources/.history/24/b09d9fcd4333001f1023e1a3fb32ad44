@@ -1,0 +1,8 @@
+package model;
+
+import java.util.ArrayList;
+
+public interface ChatInterface {
+	public void sendMessage(Message m);
+	public ArrayList<PrivateChat> getPrivateChat();
+}

@@ -1,0 +1,83 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import model.User;
+
+public class UserDAO {
+
+	private Connection con;
+
+	public UserDAO() {
+		try {
+			con = DriverManager.getConnection("jdbc:h2:~/parqueadero", "usuario", "a");
+		} catch (SQLException e) {
+			System.err.println("La conexión no se pudo establecer. " + e.getMessage());
+		}
+	}
+
+	public void addUser(User u) {
+		try {
+			Statement statementOb = con.createStatement();
+
+			String sqlString = "INSERT INTO USERS (USERNAME, ONLINE) values " + "('" + u.getUsername() + "', "
+					+ u.isOnline() + ")";
+
+			statementOb.executeUpdate(sqlString);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+		}
+	}
+
+	public ArrayList<User> listUsers(User u) {
+		
+		ArrayList<User> lista;
+		
+		try {
+			Statement statementOb = con.createStatement();
+
+			String sqlString = "SELECT * FROM USERS values " + "('" + u.getUsername() + "', "
+					+ u.isOnline() + ")";
+
+			statementOb.executeUpdate(sqlString);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+
+	public void disconnectUser(User u) {
+		try {
+			Statement statementOb = con.createStatement();
+
+			String sqlString = "UPDATE USERS SET 'ONLINE' = FALSE";
+
+			statementOb.executeUpdate(sqlString);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+		}
+	}
+}

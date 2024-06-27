@@ -1,0 +1,27 @@
+package model;
+
+public class User {
+
+	private String username;
+	private boolean online;
+	private GroupChat chatGeneral;
+	private ArrayList<PrivateChat> privateChats;
+	
+	
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+	
+}
