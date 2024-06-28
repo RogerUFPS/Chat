@@ -34,7 +34,7 @@ public class ChatDAO{
 		
 		try {
 
-			String sqlString = "INSERT INTO CHATS (MESSAGES, SENDER, RECEIVER, DATE) values " + "(?, ?, ?, ?)";
+			String sqlString = "INSERT INTO CHATS (MESSAGES, SENDER, RECEIVER, SEND_DATE) values " + "(?, ?, ?, ?)";
 
 			PreparedStatement statementOb = con.prepareStatement(sqlString);
 			
@@ -42,8 +42,6 @@ public class ChatDAO{
 			statementOb.setString(2, message.getSender().getUsername());
 			statementOb.setString(3, receiver.getUsername());
 			statementOb.setTimestamp(0, timestamp);
-			
-			
 			
 			
 		} catch (Exception e) {

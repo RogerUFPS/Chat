@@ -1,0 +1,9 @@
+package model;
+
+import java.util.LinkedList;
+
+public class GroupChat extends Chat {
+    public GroupChat(){
+        super(new LinkedList<Message>());
+    }
+}

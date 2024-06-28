@@ -1,33 +1,63 @@
 package model;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
-import model.*;
 
-public class Facade implements ChatsObserver {
+public class Facade implements ChatsObserver{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private User me;
 	private ChatInterface serverObj;
 	private GroupChat groupchat;
 	private ArrayList<PrivateChat> privateChats;
 
-	public Facade() {
+	private static Facade instance;
+	private UIChatInterface controller;
+	
+	private Facade() {
 		groupchat = new GroupChat();
 		privateChats = new ArrayList<PrivateChat>();
-
 		String serverAddress = "localhost";
 		int serverPort = 1811;
 		try {
 			Registry registry = LocateRegistry.getRegistry(serverAddress, serverPort);
-			serverObj = (ChatInterface) (registry.lookup("server"));
+			serverObj = (ChatInterface)(registry.lookup("server"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public static Facade getInstance() {
+		if(instance==null) {
+			instance = new Facade();
+		} 
+		return instance;
+	}
 
+	public GroupChat getGroupChat(){
+		return this.groupchat;
+	}
+
+	public User getUser(){
+		return this.me;
+	}
+	
 	public boolean createUser(String name) {
 		this.me = new User(name);
-		return serverObj.createUser(this.me, (ChatsObserver)this);
+		boolean success =false;
+		try {
+			success = serverObj.createUser(this.me, this);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			System.out.println("ACA");
+		}
+		if(success)
+			getPrivateChats();
+		return success;
 	}
 
 	public ChatInterface getServerObj() {
@@ -42,11 +72,25 @@ public class Facade implements ChatsObserver {
 		Message msg = new Message();
 		msg.setMessage(message);
 		msg.setSender(this.me);
-		serverObj.sendMessage(msg, receiver);
+		try {
+			serverObj.sendMessage(msg, receiver);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
+	public ArrayList<PrivateChat> getPrivateChatsList() {
+		return privateChats;
+	}
+	
 	private void getPrivateChats() {
-		privateChats = serverObj.getPrivateChats(this.me);
+		try {
+			privateChats = serverObj.getPrivateChats(this.me);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -62,11 +106,20 @@ public class Facade implements ChatsObserver {
 		}
 		return null;
 	}
+	
+	public void updateDisplay() {
+		controller.updateDisplay();
+	}
+	
+	public void setController(UIChatInterface controller) {
+		this.controller = controller;
+	}
 
 	@Override
 	public void receiveDirectMessage(Message m, User sender) {
 		PrivateChat chat = searchPrivateChat(sender);
 		chat.sendMessage(m);
+		updateDisplay();
 	}
 
 }

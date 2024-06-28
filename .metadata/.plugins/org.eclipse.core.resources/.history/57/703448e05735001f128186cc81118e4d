@@ -1,0 +1,8 @@
+package model;
+
+public interface UserChatInterface {
+
+	public boolean createUser(String name);
+	public void sendMessage(String message, User receiver);
+    public void receiveGroupMessage();
+}

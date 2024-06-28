@@ -1,0 +1,11 @@
+package view;
+
+public class MainClient extends Application{
+
+	public static void main(String[] args) {
+
+		
+		
+	}
+
+}

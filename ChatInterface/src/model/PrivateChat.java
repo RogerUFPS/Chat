@@ -1,10 +1,17 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
-public class PrivateChat {
-    private User receiver;
-    private ArrayList<Message> messages;
+public class PrivateChat extends Chat  {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private User receiver;
+
+    public PrivateChat(){
+        super(new LinkedList<Message>());
+    }
 
     public User getReceiver(){
         return this.receiver;
@@ -12,13 +19,5 @@ public class PrivateChat {
 
     public void setReceiver(User user){
         this.receiver = user;
-    }
-
-    public void sendMessage(Message m){
-    	messages.add(m);
-    }
-
-    public ArrayList<Message> getMessageList(){
-        return this.messages;
     }
 }

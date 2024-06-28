@@ -1,9 +1,16 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Message {
-    private String message;
+public class Message implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+	private String message;
     private User sender;
     private int order;
     private Calendar date;

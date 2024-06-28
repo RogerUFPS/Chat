@@ -1,0 +1,6 @@
+package model;
+
+public interface ChatsObserver extends Seralizable{
+	public void receiveGroupMessage(Message m);
+	public void receiveDirectMessage(Message m, User sender);
+}

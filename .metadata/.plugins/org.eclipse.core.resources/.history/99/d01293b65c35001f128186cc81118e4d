@@ -1,0 +1,20 @@
+package model;
+
+public class DataTransfer {
+
+	private static DataTransfer instance;
+	private static ChatWindowController s;
+	
+	
+	private DataTransfer() {
+		
+	}
+	
+	public static DataTransfer getInstance() {
+		if(instance==null) {
+			instance = new DataTransfer();
+		}
+		return instance;
+	}
+	
+}

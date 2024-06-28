@@ -1,0 +1,12 @@
+package model;
+
+import java.util.ArrayList;
+
+public class GroupChat extends Chat {
+    private ArrayList<Message> messages;
+
+    public GroupChat(){
+        this.messages = new ArrayList<Message>();
+    }
+
+}

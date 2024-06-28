@@ -1,0 +1,10 @@
+package model;
+
+import java.util.ArrayList;
+
+public interface UserChatInterface {
+	public boolean createUser(String name);
+	public void sendMessage(String message, User receiver);
+	public void setController(UIChatInterface controller);
+	public ArrayList<PrivateChat> getPrivateChatsList();
+}

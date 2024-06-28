@@ -1,0 +1,32 @@
+package model;
+
+public class DataTransfer {
+
+	private static DataTransfer instance;
+	private PrivateChat chat;
+	
+	
+	private DataTransfer() {}
+	
+	public static DataTransfer getInstance() {
+		if(instance==null) {
+			instance = new DataTransfer();
+		}
+		return instance;
+	}
+
+	public PrivateChat getChat() {
+		return chat;
+	}
+
+	public void setChat(PrivateChat chat) {
+		this.chat = chat;
+	}
+
+	public static void setInstance(DataTransfer instance) {
+		DataTransfer.instance = instance;
+	}
+	
+	
+	
+}

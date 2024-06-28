@@ -1,0 +1,9 @@
+package model;
+
+public class DataTransfer {
+
+	private static DataTransfer;
+	private static ChatWindowController s;
+	
+	
+}

@@ -18,7 +18,7 @@
       <Label text="Nombre" BorderPane.alignment="CENTER" />
    </left>
    <bottom>
-      <Button mnemonicParsing="false" BorderPane.alignment="CENTER">
+      <Button mnemonicParsing="false" onAction="#login" BorderPane.alignment="CENTER">
          <graphic>
             <ImageView fx:id="login_BTN" fitHeight="229.0" fitWidth="443.0" pickOnBounds="true" preserveRatio="true">
                <image>

@@ -1,0 +1,8 @@
+package model;
+
+
+public class GroupChat extends Chat {
+    pliubc GroupChat(){
+        super(new LinkedList<Message>());
+    }
+}

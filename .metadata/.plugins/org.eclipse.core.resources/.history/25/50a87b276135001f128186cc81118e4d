@@ -1,0 +1,13 @@
+package model;
+
+public class PrivateChat extends Chat {
+    private User receiver;
+
+    public User getReceiver(){
+        return this.receiver;
+    }
+
+    public void setReceiver(User user){
+        this.receiver = user;
+    }
+}

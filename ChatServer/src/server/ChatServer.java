@@ -42,9 +42,11 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface {
 	}
 
 	@Override
-	public boolean createUser(User newUser, ChatsObserver obs) {
+	public boolean createUser(User newUser, ChatsObserver obs) throws RemoteException{
+		System.out.println("Intentó ejecutar createUser de ChatServer");
 		UserDAO dao = new UserDAO();
 		boolean success = dao.addUser(newUser);
+		System.out.println("Pero acá no llegó");
 		if (success)
 			this.suscriptores.add(obs);
 
@@ -52,18 +54,23 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface {
 	}
 
 	@Override
-	public ArrayList<PrivateChat> getPrivateChats(User u) {
+	public ArrayList<PrivateChat> getPrivateChats(User u) throws RemoteException{
 		ChatDAO dao = new ChatDAO();
 		return dao.getPrivateChat(u);
 	}
 
 	@Override
-	public void sendMessage(Message m, User receiver) {
+	public void sendMessage(Message m, User receiver) throws RemoteException{
 		ChatDAO dao = new ChatDAO();
 		dao.sendMessage(m, receiver);
 		if (receiver == null) {
 			this.suscriptores.forEach((suscriptor) -> {
-				suscriptor.receiveGroupMessage(m);
+				try {
+					suscriptor.receiveGroupMessage(m);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			});
 		}
 	}
