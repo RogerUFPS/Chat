@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -58,7 +59,6 @@ public class ChatWindowController implements UIChatInterface {
 		}
 
 		f.sendMessage(msg, receiver);
-		updateDisplay();
 	}
 
 	@FXML
@@ -88,19 +88,32 @@ public class ChatWindowController implements UIChatInterface {
 		Message m = chat.getMessages().get(chat.getMessages().size()-1);
 
 		if (m.getSender().equals(f.getUser())) {
-			msg.setAlignment(Pos.BASELINE_LEFT);
-		} else {
 			msg.setAlignment(Pos.BASELINE_RIGHT);
+		} else {
+			msg.setAlignment(Pos.BASELINE_LEFT);
 		}
-		//Esto no lo encuentra
-		//m.getDate().toString() + " " + m.getSender() + ":" 
+				
+		String date = m.getDate().getDay() + m.getDate().getHours() + m.getDate().getMinutes() + "";
 		
-		text = new Label(m.getMessage());
+		text = new Label(date + " " + m.getSender().getUsername() + ": " + m.getMessage());
+		
+		text.setFont(new Font("Monospace", 16));
+		int height = 17;
 
-		text.setFont(new Font("Arial", 12));
-		text.setPrefHeight(20);
-		text.setMinHeight(20);
-		text.setMaxHeight(20);
+		if(text.getText().length()%17 == 0) {
+			height = (text.getText().length()/17)*17;
+		}
+		
+		text.setPadding(new Insets(1));
+		
+		text.setWrapText(true);
+		text.setPrefHeight(height);
+		text.setMinHeight(height);
+		text.setMaxHeight(height);
+		
+		msg.setPrefHeight(height);
+		msg.setMinHeight(height);
+		msg.setMaxHeight(height);
 
 		msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
 		msg.add(text, 0, nRow);
@@ -122,10 +135,13 @@ public class ChatWindowController implements UIChatInterface {
                 msg.setAlignment(Pos.BASELINE_RIGHT);
             }
             
-            text.setFont(new Font("Arial", 24));
-            text.setPrefHeight(20);            
-            text.setMinHeight(20);
-            text.setMaxHeight(20);
+            text.setFont(new Font("Monospace", 12));
+    		
+    		int height = (text.getText().length()/12)*20;
+    		
+    		text.setPrefHeight(height);
+    		text.setMinHeight(height);
+    		text.setMaxHeight(height);
     	
             msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
             msg.add(text, 0, nRow);

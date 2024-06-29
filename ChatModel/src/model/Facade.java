@@ -6,7 +6,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import controller.ChatWindowController;
 import javafx.application.Platform;
@@ -25,20 +27,22 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 	private UIChatInterface controller;
 	private ChatWindowController controlador;
 	private int serverPort, clientPort; 
+	private String clientAddress, serverAddress;
 	
 	private Facade() throws RemoteException{
 		super();
 		groupchat = new GroupChat();
 		privateChats = new ArrayList<PrivateChat>();
 		
-		String serverAddress ="";
+		serverAddress = "26.193.129.51";
 		try {
-			serverAddress = (InetAddress.getLocalHost()).getHostAddress();
+			clientAddress = (InetAddress.getLocalHost()).getHostAddress();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 		serverPort = 1811;
-		clientPort = 2812;
+		clientPort = 2813;
+		
 		
 		try {
 			Registry registry = LocateRegistry.getRegistry(serverAddress, serverPort);
@@ -68,6 +72,14 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		return this.me;
 	}
 	
+	public void disconnectUser() {
+		try {
+			serverObj.disconnectUser(me);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public boolean createUser(String name) {
 		this.me = new User(name);
 		me.setOnline(true);
@@ -93,7 +105,6 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 				e.printStackTrace();
 			}
 		});
-		
 		t.start();
 	}
 
@@ -109,6 +120,9 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		Message msg = new Message();
 		msg.setMessage(message);
 		msg.setSender(this.me);
+		Date date = new Date();
+		Timestamp timestamp = new Timestamp(date.getTime());
+		msg.setDate(timestamp);
 		try {
 			serverObj.sendMessage(msg, receiver);
 		} catch (RemoteException e) {
@@ -134,7 +148,7 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 	public void receiveGroupMessage(Message m) {
 		this.groupchat.sendMessage(m);
 		DataTransfer.getInstance().setChat(groupchat);
-		updateDisplay();
+		Platform.runLater(() -> updateDisplay());
 	}
 
 	private PrivateChat searchPrivateChat(User u) {
@@ -167,8 +181,13 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 	}
 
 	@Override
-	public int getPort() {
+	public int getPort() throws RemoteException{
 		return clientPort;
+	}
+
+	@Override
+	public String getIP() throws RemoteException {
+		return clientAddress;
 	}
 
 }

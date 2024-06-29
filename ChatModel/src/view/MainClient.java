@@ -1,10 +1,13 @@
 package view;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import model.Facade;
 
 public class MainClient extends Application{
 
@@ -17,8 +20,17 @@ public class MainClient extends Application{
 			Scene scene = new Scene(root);
 						
 			primaryStage.setResizable(false);
-			primaryStage.setScene(scene);
+			primaryStage.setScene(scene);	
 			primaryStage.show();
+			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+				public void handle(WindowEvent arg0) {
+					Facade f = Facade.getInstance();
+					f.disconnectUser();
+					System.exit(0);
+				}	
+			});
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

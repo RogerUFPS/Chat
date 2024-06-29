@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Calendar;
 
 public class Message implements Serializable{
@@ -13,7 +14,7 @@ public class Message implements Serializable{
 	private String message;
     private User sender;
     private int order;
-    private Calendar date;
+    private Timestamp date;
 
     public void setMessage(String m){
         this.message = m;
@@ -31,11 +32,11 @@ public class Message implements Serializable{
         return this.sender;
     }
     
-    public Calendar getDate() {
+    public Timestamp getDate() {
 		return date;
 	}
 
-	public void setDate(Calendar date) {
+	public void setDate(Timestamp date) {
 		this.date = date;
 	}
 

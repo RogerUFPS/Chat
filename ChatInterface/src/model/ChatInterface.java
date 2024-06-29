@@ -8,4 +8,5 @@ public interface ChatInterface extends Remote {
 	public void sendMessage(Message m, User receiver) throws RemoteException;
 	public boolean createUser(User newUser, ChatsObserver obs) throws RemoteException;
 	public ArrayList<PrivateChat> getPrivateChats(User u) throws RemoteException;
+	public void disconnectUser(User u) throws RemoteException;
 }

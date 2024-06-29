@@ -27,7 +27,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 
 	private static final long serialVersionUID = 1L;
 	private final int PUERTO = 1811;
-	private LinkedList<ChatsObserver> suscribers;
+	private LinkedList<Suscriber> suscribers;
 
 	public ChatServer() throws RemoteException {
 		suscribers = new LinkedList();
@@ -43,19 +43,20 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 			e.printStackTrace();
 		}
 	}
-
+	
+	@Override
+	public void disconnectUser(User u) {
+		UserDAO dao = new UserDAO();
+		dao.disconnectUser(u);
+	}
+	
 	@Override
 	public boolean createUser(User newUser, ChatsObserver obs) throws RemoteException{
 		UserDAO dao = new UserDAO();
 		boolean success = dao.addUser(newUser);
 		if (success) {
-			try {
-				Registry reg = LocateRegistry.getRegistry((InetAddress.getLocalHost()).getHostAddress(), 2812);
-				ChatsObserver sub = (ChatsObserver)reg.lookup("client");
-				this.suscribers.add(sub);
-			} catch(Exception e){
-				e.printStackTrace();
-			}
+			Suscriber s = new Suscriber(obs.getIP(), obs.getPort());
+			suscribers.add(s);
 		}
 		
 		return success;
@@ -72,19 +73,20 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 		ChatDAO dao = new ChatDAO();
 		dao.sendMessage(m, receiver);
 		if (receiver == null) {
-			//Thread t = new Thread(() -> {				
-				try {
-					Registry reg = LocateRegistry.getRegistry((InetAddress.getLocalHost()).getHostAddress(), 2812);
-					ChatsObserver sub = (ChatsObserver)reg.lookup("client");
-					sub.receiveGroupMessage(m);
-				} catch(Exception e){
-					e.printStackTrace();
-				}
+			//Thread t = new Thread(() -> {
+				for(Suscriber s : this.suscribers){
+					try {
+						Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
+						ChatsObserver sub = (ChatsObserver)reg.lookup("client");
+						sub.receiveGroupMessage(m);
+					} catch(Exception e){
+						e.printStackTrace();
+					}
+				}				
 				
 			//});
 			//t.start();
 		}
 	}
-
 
 }

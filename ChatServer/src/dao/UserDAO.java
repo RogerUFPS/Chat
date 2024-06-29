@@ -124,7 +124,7 @@ public class UserDAO {
 		try {
 			Statement statementOb = con.createStatement();
 
-			String sqlString = "UPDATE USERS SET 'ONLINE' = FALSE";
+			String sqlString = "UPDATE USERS SET ONLINE = FALSE";
 
 			statementOb.executeUpdate(sqlString);
 		} catch (Exception e) {
