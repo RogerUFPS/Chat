@@ -41,7 +41,7 @@
             </Label>
          </children>
       </GridPane>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+      <ScrollPane fx:id="scrollOnline" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
          <content>
             <GridPane fx:id="gridOnline" prefHeight="394.0" prefWidth="173.0">
               <columnConstraints>

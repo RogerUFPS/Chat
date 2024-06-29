@@ -9,8 +9,10 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import controller.ChatWindowController;
+import controller.MainChatWindows;
 import javafx.application.Platform;
 
 public class Facade extends UnicastRemoteObject implements ChatsObserver{
@@ -64,10 +66,24 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		return instance;
 	}
 
+	public List<User> loadActiveUsers(){
+		try{
+			
+			List<User> list = serverObj.loadActiveUsers();
+			list.remove(this.me);
+			return list;
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+
 	public GroupChat getGroupChat(){
 		return this.groupchat;
 	}
 
+	@Override
 	public User getUser(){
 		return this.me;
 	}
@@ -106,6 +122,7 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 			}
 		});
 		t.start();
+		t.interrupt();
 	}
 
 	public ChatInterface getServerObj() {
@@ -161,11 +178,16 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 	}
 	
 	public void updateDisplay() {
-		//controller.updateDisplay();
-		controlador.updateDisplay();
+		if(controller !=null) {
+			controller.updateDisplay();
+		}
+		if(controlador!=null) {			
+			controlador.updateDisplay();
+		}
+		
 	}
 	
-	public void setController(UIChatInterface controller) {
+	public void setController(MainChatWindows controller) {
 		this.controller = controller;
 	}
 
@@ -174,10 +196,10 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 	}
 
 	@Override
-	public void receiveDirectMessage(Message m, User sender) {
-		PrivateChat chat = searchPrivateChat(sender);
+	public void receiveDirectMessage(Message m) {
+		PrivateChat chat = searchPrivateChat(m.getSender());
 		chat.sendMessage(m);
-		updateDisplay();
+		Platform.runLater(() -> updateDisplay());
 	}
 
 	@Override

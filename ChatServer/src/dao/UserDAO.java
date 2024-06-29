@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import model.User;
 
@@ -33,8 +34,13 @@ public class UserDAO {
 			return success; 
 		} else if (exists(u) && !isUserOnline(u)) {
 			try {
+				Statement statementOb = con.createStatement();
+				statementOb.executeUpdate("UPDATE USERS SET ONLINE=TRUE WHERE USERNAME='" + u.getUsername()+"'");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
 				con.close();
-
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -118,6 +124,33 @@ public class UserDAO {
 			}
 		}
 		return lista;
+	}
+	
+	public List<User> listOnlineUsers(){
+		ArrayList<User> list = new ArrayList<User>();
+		try {
+			Statement statementOb = con.createStatement();
+
+			ResultSet r = statementOb.executeQuery("SELECT * FROM USERS WHERE ONLINE = TRUE");
+
+			while (r.next()) {
+				String nombre = r.getString("USERNAME");
+				System.out.println(nombre);
+				boolean online = r.getBoolean("ONLINE");
+				User temp = new User(nombre);
+				temp.setOnline(online);
+				list.add(temp);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+		}
+		return list;
 	}
 
 	public void disconnectUser(User u) {

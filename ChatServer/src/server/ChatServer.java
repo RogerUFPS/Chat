@@ -57,9 +57,24 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 		if (success) {
 			Suscriber s = new Suscriber(obs.getIP(), obs.getPort());
 			suscribers.add(s);
+			notifyNewOnlineUsers();
 		}
 		
 		return success;
+	}
+	
+	public void notifyNewOnlineUsers() {
+		for(Suscriber s : this.suscribers){
+			try {
+				Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
+				ChatsObserver sub = null;
+				sub = (ChatsObserver)reg.lookup("client");
+				sub.updateDisplay();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 	@Override
@@ -72,10 +87,11 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 	public void sendMessage(Message m, User receiver) throws RemoteException{
 		ChatDAO dao = new ChatDAO();
 		dao.sendMessage(m, receiver);
-		if (receiver == null) {
+		if (receiver == null) { //va al chat grupal
 			//Thread t = new Thread(() -> {
 				for(Suscriber s : this.suscribers){
 					try {
+						System.out.println(s.getPort());
 						Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
 						ChatsObserver sub = (ChatsObserver)reg.lookup("client");
 						sub.receiveGroupMessage(m);
@@ -87,6 +103,25 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 			//});
 			//t.start();
 		}
+		else{ //chat dm
+			for(Suscriber s : this.suscribers){
+				Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
+				ChatsObserver sub = null;
+				try {
+				sub = (ChatsObserver)reg.lookup("client");
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				if(sub.getUser().equals(receiver)){
+					sub.receiveDirectMessage(m);
+					return;
+				}
+			}
+		}
+	}
+
+	public List<User> loadActiveUsers(){
+		return new UserDAO().listOnlineUsers();
 	}
 
 }

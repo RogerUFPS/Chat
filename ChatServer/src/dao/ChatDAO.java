@@ -60,7 +60,6 @@ public class ChatDAO{
 		try {
 			Statement statementOb = con.createStatement();
 			ResultSet r = statementOb.executeQuery("SELECT * FROM CHATS WHERE SENDER='"+u.getUsername()+" OR RECEIVER="+u.getUsername()+"' ORDER BY ORDER_IN_CHAT");
-
 				
 			PrivateChat chat = new PrivateChat();
 			

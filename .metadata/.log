@@ -9884,3 +9884,12 @@ java.nio.file.FileSystemException: C:\Users\Roger\Documents\Universidad\Programa
 
 !ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 15:47:24.320
 !MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 17:35:20.253
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 17:35:20.255
+!MESSAGE The CodeTogether Live session closed unexpectedly, trying to reconnect.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 17:35:21.477
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.

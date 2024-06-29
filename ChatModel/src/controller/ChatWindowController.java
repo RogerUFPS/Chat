@@ -97,14 +97,12 @@ public class ChatWindowController implements UIChatInterface {
 		
 		text = new Label(date + " " + m.getSender().getUsername() + ": " + m.getMessage());
 		
-		text.setFont(new Font("Monospace", 16));
+		text.setFont(new Font("Monospace", 12));
 		int height = 17;
 
 		if(text.getText().length()%17 == 0) {
 			height = (text.getText().length()/17)*17;
 		}
-		
-		text.setPadding(new Insets(1));
 		
 		text.setWrapText(true);
 		text.setPrefHeight(height);
