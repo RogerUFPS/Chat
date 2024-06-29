@@ -41,7 +41,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <TextArea prefHeight="81.0" prefWidth="359.0">
+                  <TextArea fx:id="chat_TXT_A" prefHeight="81.0" prefWidth="359.0">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </GridPane.margin>

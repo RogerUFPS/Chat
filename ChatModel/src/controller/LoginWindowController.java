@@ -29,7 +29,7 @@ public class LoginWindowController {
 
     @FXML
     private TextField nombreUsuario_TXTF;
-    private Facade f;
+    private Facade f = Facade.getInstance();
     private Alert alert;
     
     @FXML
@@ -40,15 +40,16 @@ public class LoginWindowController {
     		alert.show();
             return;
     	} else {
-        
+
             boolean success = f.createUser(username);
             if(!success) {
-            	alert.setContentText("Ese usuario ya existe");
+            	alert.setContentText("Ese usuario ya existe y esta conectado!");
+            	alert.show();
                 return;
             } 
             
             Node node = (Node) event.getSource();
-    		 Stage stage = (Stage) node.getScene().getWindow();
+    		Stage stage = (Stage) node.getScene().getWindow();
     		stage.close();
             try {
     			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainChatWindow.fxml"));
@@ -66,7 +67,7 @@ public class LoginWindowController {
     void initialize() {
         assert login_BTN != null : "fx:id=\"login_BTN\" was not injected: check your FXML file 'LoginWindow.fxml'.";
         assert nombreUsuario_TXTF != null : "fx:id=\"nombreUsuario_TXTF\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        f = Facade.getInstance();
+        //f = Facade.getInstance();
         alert = new Alert(AlertType.WARNING);
     }
 

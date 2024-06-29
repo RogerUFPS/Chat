@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import model.Message;
@@ -31,19 +30,19 @@ public class ChatDAO{
 		
 		Date date = new Date();
 		Timestamp timestamp = new Timestamp(date.getTime());
-		
 		try {
-
-			String sqlString = "INSERT INTO CHATS (MESSAGES, SENDER, RECEIVER, SEND_DATE) values " + "(?, ?, ?, ?)";
-
+			String sqlString = "INSERT INTO CHATS (MESSAGE, SENDER, RECEIVER, SEND_DATE) values " + "(?, ?, ?, ?)";
 			PreparedStatement statementOb = con.prepareStatement(sqlString);
-			
 			statementOb.setString(1, message.getMessage());
 			statementOb.setString(2, message.getSender().getUsername());
-			statementOb.setString(3, receiver.getUsername());
-			statementOb.setTimestamp(0, timestamp);
+			if(receiver == null) {				
+				statementOb.setString(3, "null");
+			} else {				
+				statementOb.setString(3, receiver.getUsername());
+			}
+			statementOb.setTimestamp(4, timestamp);
 			
-			
+			statementOb.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

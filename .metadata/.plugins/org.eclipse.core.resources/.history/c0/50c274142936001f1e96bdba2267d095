@@ -1,0 +1,73 @@
+package controller;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import model.Facade;
+
+public class LoginWindowController {
+
+    @FXML
+    private ResourceBundle resources;
+
+    @FXML
+    private URL location;
+
+    @FXML
+    private ImageView login_BTN;
+
+    @FXML
+    private TextField nombreUsuario_TXTF;
+    private Facade f;
+    private Alert alert;
+    
+    @FXML
+    void login(ActionEvent event) {
+//    	String username = nombreUsuario_TXTF.getText().trim();
+//    	if(username.isBlank()) {
+//    		alert.setContentText("El nombre no puede ser vacío");
+//    		alert.show();
+//            return;
+//    	} else {
+//        
+//            boolean success = f.createUser(username);
+//            if(!success) {
+//            	alert.setContentText("Ese usuario ya existe");
+//                return;
+//            } 
+//            
+//            Node node = (Node) event.getSource();
+//    		 Stage stage = (Stage) node.getScene().getWindow();
+//    		stage.close();
+//            try {
+//    			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainChatWindow.fxml"));
+//    			Pane root = loader.load();			
+//    			Scene scene = new Scene(root);
+//    		    stage.setScene(scene);
+//    		    stage.show();		    		    
+//    		} catch (IOException ex) {
+//    			ex.printStackTrace();
+//    		}
+//        }
+    }
+
+    @FXML
+    void initialize() {
+        assert login_BTN != null : "fx:id=\"login_BTN\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert nombreUsuario_TXTF != null : "fx:id=\"nombreUsuario_TXTF\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        f = Facade.getInstance();
+        alert = new Alert(AlertType.WARNING);
+    }
+
+}

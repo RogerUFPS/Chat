@@ -1,11 +1,17 @@
 package model;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-public class Facade implements ChatsObserver{
+import controller.ChatWindowController;
+import javafx.application.Platform;
+
+public class Facade extends UnicastRemoteObject implements ChatsObserver{
 	/**
 	 * 
 	 */
@@ -17,12 +23,23 @@ public class Facade implements ChatsObserver{
 
 	private static Facade instance;
 	private UIChatInterface controller;
+	private ChatWindowController controlador;
+	private int serverPort, clientPort; 
 	
-	private Facade() {
+	private Facade() throws RemoteException{
+		super();
 		groupchat = new GroupChat();
 		privateChats = new ArrayList<PrivateChat>();
-		String serverAddress = "localhost";
-		int serverPort = 1811;
+		
+		String serverAddress ="";
+		try {
+			serverAddress = (InetAddress.getLocalHost()).getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		serverPort = 1811;
+		clientPort = 2812;
+		
 		try {
 			Registry registry = LocateRegistry.getRegistry(serverAddress, serverPort);
 			serverObj = (ChatInterface)(registry.lookup("server"));
@@ -33,7 +50,12 @@ public class Facade implements ChatsObserver{
 	
 	public static Facade getInstance() {
 		if(instance==null) {
-			instance = new Facade();
+			try {
+				instance = new Facade();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} 
 		return instance;
 	}
@@ -48,16 +70,31 @@ public class Facade implements ChatsObserver{
 	
 	public boolean createUser(String name) {
 		this.me = new User(name);
+		me.setOnline(true);
 		boolean success =false;
 		try {
-			success = serverObj.createUser(this.me, this);
+			serverUp();
+			success = serverObj.createUser(this.me, (ChatsObserver)this);
 		} catch (RemoteException e) {
 			e.printStackTrace();
-			System.out.println("ACA");
-		}
+		} 
+		
 		if(success)
 			getPrivateChats();
 		return success;
+	}
+
+	private void serverUp(){
+		Thread t = new Thread(() -> {
+			try {
+				Registry r = LocateRegistry.createRegistry(getPort());
+				r.bind("client", (ChatsObserver)this);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		});
+		
+		t.start();
 	}
 
 	public ChatInterface getServerObj() {
@@ -96,6 +133,8 @@ public class Facade implements ChatsObserver{
 	@Override
 	public void receiveGroupMessage(Message m) {
 		this.groupchat.sendMessage(m);
+		DataTransfer.getInstance().setChat(groupchat);
+		updateDisplay();
 	}
 
 	private PrivateChat searchPrivateChat(User u) {
@@ -108,11 +147,16 @@ public class Facade implements ChatsObserver{
 	}
 	
 	public void updateDisplay() {
-		controller.updateDisplay();
+		//controller.updateDisplay();
+		controlador.updateDisplay();
 	}
 	
 	public void setController(UIChatInterface controller) {
 		this.controller = controller;
+	}
+
+	public void setController2(ChatWindowController c){
+		this.controlador = c;
 	}
 
 	@Override
@@ -120,6 +164,11 @@ public class Facade implements ChatsObserver{
 		PrivateChat chat = searchPrivateChat(sender);
 		chat.sendMessage(m);
 		updateDisplay();
+	}
+
+	@Override
+	public int getPort() {
+		return clientPort;
 	}
 
 }

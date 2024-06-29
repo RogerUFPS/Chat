@@ -14,20 +14,23 @@ import model.Message;
 import model.PrivateChat;
 import model.User;
 
+import java.io.Serializable;
 import java.net.*;
 
-public class ChatServer extends UnicastRemoteObject implements ChatInterface {
+public class ChatServer extends UnicastRemoteObject implements ChatInterface, Serializable {
 
 	public static void main(String[] args) throws Exception {
+		System.setProperty("java.security.policy", "C:\\Users\\Roger\\Documents\\Universidad\\Programacion\\Chat\\policyfile.policy");
+		System.setSecurityManager(new SecurityManager());
 		(new ChatServer()).startServer();
 	}
 
-	private static final long serialVersionUID = 9L;
+	private static final long serialVersionUID = 1L;
 	private final int PUERTO = 1811;
-	private LinkedList<ChatsObserver> suscriptores;
+	private LinkedList<ChatsObserver> suscribers;
 
 	public ChatServer() throws RemoteException {
-		suscriptores = new LinkedList();
+		suscribers = new LinkedList();
 	}
 
 	public void startServer() {
@@ -43,13 +46,18 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface {
 
 	@Override
 	public boolean createUser(User newUser, ChatsObserver obs) throws RemoteException{
-		System.out.println("Intentó ejecutar createUser de ChatServer");
 		UserDAO dao = new UserDAO();
 		boolean success = dao.addUser(newUser);
-		System.out.println("Pero acá no llegó");
-		if (success)
-			this.suscriptores.add(obs);
-
+		if (success) {
+			try {
+				Registry reg = LocateRegistry.getRegistry((InetAddress.getLocalHost()).getHostAddress(), 2812);
+				ChatsObserver sub = (ChatsObserver)reg.lookup("client");
+				this.suscribers.add(sub);
+			} catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		
 		return success;
 	}
 
@@ -64,15 +72,19 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface {
 		ChatDAO dao = new ChatDAO();
 		dao.sendMessage(m, receiver);
 		if (receiver == null) {
-			this.suscriptores.forEach((suscriptor) -> {
+			//Thread t = new Thread(() -> {				
 				try {
-					suscriptor.receiveGroupMessage(m);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
+					Registry reg = LocateRegistry.getRegistry((InetAddress.getLocalHost()).getHostAddress(), 2812);
+					ChatsObserver sub = (ChatsObserver)reg.lookup("client");
+					sub.receiveGroupMessage(m);
+				} catch(Exception e){
 					e.printStackTrace();
 				}
-			});
+				
+			//});
+			//t.start();
 		}
 	}
+
 
 }

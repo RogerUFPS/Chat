@@ -1,0 +1,85 @@
+package server;
+
+import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.*;
+
+import dao.ChatDAO;
+import dao.UserDAO;
+import model.ChatInterface;
+import model.ChatsObserver;
+import model.Message;
+import model.PrivateChat;
+import model.User;
+
+import java.io.Serializable;
+import java.net.*;
+
+public class ChatServer extends UnicastRemoteObject implements ChatInterface, Serializable {
+
+	public static void main(String[] args) throws Exception {
+		System.setProperty("java.security.policy", "C:\\Users\\Roger\\Documents\\Universidad\\Programacion\\Chat\\policyfile.policy");
+		System.setSecurityManager(new SecurityManager());
+		(new ChatServer()).startServer();
+	}
+
+	private static final long serialVersionUID = 1L;
+	private final int PUERTO = 1811;
+	private LinkedList<ChatsObserver> suscribers;
+
+	public ChatServer() throws RemoteException {
+		suscribers = new LinkedList();
+	}
+
+	public void startServer() {
+		try {
+			String dirIP = (InetAddress.getLocalHost()).toString();
+			System.out.println("Ecuchando en.. " + dirIP + ":" + PUERTO);
+			Registry registry = LocateRegistry.createRegistry(PUERTO);
+			registry.bind("server", (ChatInterface) this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public boolean createUser(User newUser, ChatsObserver obs) throws RemoteException{
+		UserDAO dao = new UserDAO();
+		boolean success = dao.addUser(newUser);
+		if (success) {
+			try {
+				Registry reg = LocateRegistry.getRegistry((InetAddress.getLocalHost()).getHostAddress(), 2812);
+				ChatsObserver sub = (ChatsObserver)reg.lookup("client");
+				this.suscribers.add(sub);
+			} catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		
+		return success;
+	}
+
+	@Override
+	public ArrayList<PrivateChat> getPrivateChats(User u) throws RemoteException{
+		ChatDAO dao = new ChatDAO();
+		return dao.getPrivateChat(u);
+	}
+
+	@Override
+	public void sendMessage(Message m, User receiver) throws RemoteException{
+		ChatDAO dao = new ChatDAO();
+		dao.sendMessage(m, receiver);
+		if (receiver == null) {
+			Thread t = new Thread(() -> {
+				
+				
+				
+			});
+			t.run();
+		}
+	}
+
+
+}

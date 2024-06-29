@@ -21,14 +21,31 @@ public class UserDAO {
 		}
 	}
 
-	public boolean addUser(User u) { //falta verificar que no hayan nombres repetidos
-			boolean success = false;
+	public boolean addUser(User u) { // falta verificar que no hayan nombres repetidos
+		boolean success = false;
+		if (exists(u) && isUserOnline(u)) {
+			System.out.println("Este usuario ya esta conectado");
+			try {
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return success; 
+		} else if (exists(u) && !isUserOnline(u)) {
+			try {
+				con.close();
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return true;
+		}
+
 		try {
 			Statement statementOb = con.createStatement();
-
 			String sqlString = "INSERT INTO USERS (USERNAME, ONLINE) values " + "('" + u.getUsername() + "', "
 					+ u.isOnline() + ")";
-
 			statementOb.executeUpdate(sqlString);
 			success = true;
 		} catch (Exception e) {
@@ -39,8 +56,42 @@ public class UserDAO {
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
 			}
+			return success;
+		}
+	}
+
+	public boolean isUserOnline(User u) {
+		boolean success = false;
+		try {
+			Statement statementOb = con.createStatement();
+			String sqlString = "SELECT * FROM USERS WHERE USERNAME='" + u.getUsername() + "'";
+			ResultSet r = statementOb.executeQuery(sqlString);
+
+			if(r.next()) {
+				success = r.getBoolean("ONLINE");
+			}
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			
 		}
 		return success;
+	}
+
+	public boolean exists(User u) {
+
+		try {
+			Statement statementOb = con.createStatement();
+			ResultSet r = statementOb.executeQuery("SELECT * FROM USERS WHERE USERNAME='"+u.getUsername()+"'");
+			return r.next();
+		} catch (SQLException e) { // TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			
+		}
+
+		return false;
 	}
 
 	public ArrayList<User> listUsers(User u) {
@@ -49,14 +100,14 @@ public class UserDAO {
 			Statement statementOb = con.createStatement();
 
 			ResultSet r = statementOb.executeQuery("SELECT * FROM USERS WHERE USERNAME = " + u.getUsername());
-			
-			while(r.next()){
+
+			while (r.next()) {
 				String nombre = r.getString("USERNAME");
 				boolean online = r.getBoolean("ONLINE");
 				User temp = new User(nombre);
 				temp.setOnline(online);
-                lista.add(temp);
-            }
+				lista.add(temp);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
