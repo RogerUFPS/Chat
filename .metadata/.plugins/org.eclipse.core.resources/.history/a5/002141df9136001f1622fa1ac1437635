@@ -36,7 +36,7 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		groupchat = new GroupChat();
 		privateChats = new ArrayList<PrivateChat>();
 		
-		serverAddress = "26.193.129.51";
+		serverAddress = "localhost";
 		try {
 			clientAddress = (InetAddress.getLocalHost()).getHostAddress();
 		} catch (UnknownHostException e) {

@@ -43,7 +43,7 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 			e.printStackTrace();
 		}
 		serverPort = 1811;
-		clientPort = 2813;
+		clientPort = 2817;
 		
 		
 		try {
@@ -141,12 +141,10 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		Timestamp timestamp = new Timestamp(date.getTime());
 		msg.setDate(timestamp);
 		try {
-			if(receiver != null) {
-				Chat c = searchPrivateChat(receiver);
-				c.sendMessage(msg);
-				DataTransfer.getInstance().setChat(c);
-				updateDisplay();				
-			} 
+			Chat c = searchPrivateChat(receiver);
+			c.sendMessage(msg);
+			DataTransfer.getInstance().setChat(c);
+			updateDisplay();
 			serverObj.sendMessage(msg, receiver);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -193,6 +191,7 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		if(controlador!=null) {			
 			Platform.runLater(() -> controlador.updateDisplay());
 		}
+		
 	}
 	
 	public void setController(MainChatWindows controller) {

@@ -137,6 +137,7 @@ public class MainChatWindows implements UIChatInterface{
     	ArrayList<PrivateChat> pc = f.getPrivateChatsList();
     	GridPane chat;
     	Label nombrePersona;
+    	System.out.println("Hola: " + pc.size());
     	for(PrivateChat a: pc) {
     		chat = new GridPane();
     		System.out.println(a.getReceiver().getUsername() + "ESTE ES EL NOMBRE");
@@ -166,6 +167,8 @@ public class MainChatWindows implements UIChatInterface{
     	cargarChats();
 		cargarConectados();
 	}
+    
+    
     
     @FXML
     void initialize() {

@@ -158,6 +158,10 @@ public class MainChatWindows implements UIChatInterface{
     	}
     }
     
+    public void actualizarChats() {
+    	
+    }
+    
     @Override
 	public void updateDisplay() {
     	gridChats.getChildren().clear();

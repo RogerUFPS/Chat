@@ -20,6 +20,8 @@ import java.net.*;
 public class ChatServer extends UnicastRemoteObject implements ChatInterface, Serializable {
 
 	public static void main(String[] args) throws Exception {
+		System.setProperty("java.security.policy", "C:\\Users\\Roger\\Documents\\Universidad\\Programacion\\Chat\\policyfile.policy");
+		System.setSecurityManager(new SecurityManager());
 		(new ChatServer()).startServer();
 	}
 
@@ -46,7 +48,6 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 	public void disconnectUser(User u) {
 		UserDAO dao = new UserDAO();
 		dao.disconnectUser(u);
-		//Hacer update
 	}
 	
 	@Override

@@ -9929,3 +9929,12 @@ java.util.ConcurrentModificationException
 
 !ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 20:37:15.109
 !MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 21:40:36.708
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 21:40:36.709
+!MESSAGE The CodeTogether Live session closed unexpectedly, trying to reconnect.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 21:40:38.074
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.
