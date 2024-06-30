@@ -43,10 +43,23 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 	}
 	
 	@Override
-	public void disconnectUser(User u) {
+	public void disconnectUser(User u, String ip, int puerto) {
 		UserDAO dao = new UserDAO();
 		dao.disconnectUser(u);
-		//Hacer update
+		Suscriber x = new Suscriber(ip, puerto);
+		suscribers.remove(x);
+		
+//		//Actualizamos la lista de conectados
+//		for(Suscriber n: suscribers) {
+//			try {
+//				Registry reg = LocateRegistry.getRegistry(n.getIp(), n.getPort());
+//				ChatsObserver sub = (ChatsObserver)reg.lookup("client");
+//				sub.updateDisplay();
+//			} catch(Exception e){
+//				e.printStackTrace();
+//			}
+//		}
+		
 	}
 	
 	@Override
@@ -80,7 +93,6 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 	public ArrayList<PrivateChat> getPrivateChats(User u) throws RemoteException{
 		ChatDAO dao = new ChatDAO();
 		ArrayList<PrivateChat> a = dao.getPrivateChat(u);
-		System.out.println("Tamaño de a en chatserver " + a.size());
 		return a;
 	}
 
@@ -105,12 +117,12 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 				ChatsObserver sub = null;
 				try {
 					sub = (ChatsObserver)reg.lookup("client");
+					if(sub.getUser().equals(receiver)){
+						sub.receiveDirectMessage(m);
+						return;
+					}
 				}catch(Exception e) {
 					e.printStackTrace();
-				}
-				if(sub.getUser().equals(receiver)){
-					sub.receiveDirectMessage(m);
-					return;
 				}
 			}
 		}

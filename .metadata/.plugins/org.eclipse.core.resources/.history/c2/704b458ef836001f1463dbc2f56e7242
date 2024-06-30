@@ -1,0 +1,126 @@
+package server;
+
+import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.*;
+
+import dao.ChatDAO;
+import dao.UserDAO;
+import model.ChatInterface;
+import model.ChatsObserver;
+import model.Message;
+import model.PrivateChat;
+import model.User;
+
+import java.io.Serializable;
+import java.net.*;
+
+public class ChatServer extends UnicastRemoteObject implements ChatInterface, Serializable {
+
+	public static void main(String[] args) throws Exception {
+		(new ChatServer()).startServer();
+	}
+
+	private static final long serialVersionUID = 1L;
+	private final int PUERTO = 1811;
+	private LinkedList<Suscriber> suscribers;
+
+	public ChatServer() throws RemoteException {
+		suscribers = new LinkedList();
+	}
+
+	public void startServer() {
+		try {
+			String dirIP = (InetAddress.getLocalHost()).toString();
+			System.out.println("Ecuchando en.. " + dirIP + ":" + PUERTO);
+			Registry registry = LocateRegistry.createRegistry(PUERTO);
+			registry.bind("server", (ChatInterface) this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void disconnectUser(User u, String ip, int puerto) {
+		UserDAO dao = new UserDAO();
+		dao.disconnectUser(u);
+		Suscriber x = new Suscriber(ip, puerto);
+		suscribers.remove(x);
+		
+		
+		
+	}
+	
+	@Override
+	public boolean createUser(User newUser, ChatsObserver obs) throws RemoteException{
+		UserDAO dao = new UserDAO();
+		boolean success = dao.addUser(newUser);
+		if (success) {
+			Suscriber s = new Suscriber(obs.getIP(), obs.getPort());
+			suscribers.add(s);
+			notifyNewOnlineUsers();
+		}
+		
+		return success;
+	}
+	
+	public void notifyNewOnlineUsers() {
+		for(Suscriber s : this.suscribers){
+			try {
+				Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
+				ChatsObserver sub = null;
+				sub = (ChatsObserver)reg.lookup("client");
+				sub.updateDisplay();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+	@Override
+	public ArrayList<PrivateChat> getPrivateChats(User u) throws RemoteException{
+		ChatDAO dao = new ChatDAO();
+		ArrayList<PrivateChat> a = dao.getPrivateChat(u);
+		return a;
+	}
+
+	@Override
+	public void sendMessage(Message m, User receiver) throws RemoteException{
+		ChatDAO dao = new ChatDAO();
+		dao.sendMessage(m, receiver);
+		if (receiver == null) { //va al chat grupal
+				for(Suscriber s : this.suscribers){
+					try {
+						Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
+						ChatsObserver sub = (ChatsObserver)reg.lookup("client");
+						sub.receiveGroupMessage(m);
+					} catch(Exception e){
+						e.printStackTrace();
+					}
+				}				
+		}
+		else{ //chat dm
+			for(Suscriber s : this.suscribers){
+				Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
+				ChatsObserver sub = null;
+				try {
+					sub = (ChatsObserver)reg.lookup("client");
+					if(sub.getUser().equals(receiver)){
+						sub.receiveDirectMessage(m);
+						return;
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public List<User> loadActiveUsers(){
+		return new UserDAO().listOnlineUsers();
+	}
+
+}

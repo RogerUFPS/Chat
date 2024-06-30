@@ -65,9 +65,7 @@ public class ChatDAO{
 			Statement statementOb = con.createStatement();
 			String sqlRequest = "SELECT * FROM CHATS WHERE SENDER='" +u.getUsername()+ "' ORDER BY ORDER_IN_CHAT";
 			ResultSet r = statementOb.executeQuery(sqlRequest);
-				
-			System.out.println(sqlRequest);
-		
+						
 			while(r.next()) {
 				String smsg = r.getString("MESSAGE");
 				//String sSender = r.getString("SENDER");
