@@ -85,6 +85,7 @@ public class MainChatWindows implements UIChatInterface{
     	}
     	if(nuevo == null) {
     		nuevo = new PrivateChat();
+			nuevo.setReceiver(n);
     	}
     	return nuevo;
     }
@@ -109,22 +110,26 @@ public class MainChatWindows implements UIChatInterface{
     void cargarConectados() {
     	GridPane user;
     	Label username;
-    	user = new GridPane();
     	
     	for(User s: f.loadActiveUsers()) {
+    		user = new GridPane();
     		username = new Label(s.getUsername());
     		username.setFont(new Font("Monospace", 12));
         	username.setPrefHeight(20);            
         	username.setMinHeight(20);
         	username.setMaxHeight(20);
+        	user.setPrefHeight(20);
+        	user.setMaxHeight(20);
+        	user.setMinHeight(20);
         	username.setAlignment(Pos.CENTER);
         	user.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
         	user.setOnMouseClicked(e -> {
+				System.out.println("s es " + s.getUsername());
        		 	ejecutarChat(obtenerChat(s), e);
            });
         	user.add(username, 0, 0);
-        	gridOnline.add(user, 0, nRowC);
-        	nRowC++;
+        	
+        	gridOnline.add(user, 0, nRowC++);
     	}
     }
     
@@ -132,9 +137,10 @@ public class MainChatWindows implements UIChatInterface{
     	ArrayList<PrivateChat> pc = f.getPrivateChatsList();
     	GridPane chat;
     	Label nombrePersona;
-    	
+    	System.out.println("Hola: " + pc.size());
     	for(PrivateChat a: pc) {
     		chat = new GridPane();
+    		System.out.println(a.getReceiver().getUsername() + "ESTE ES EL NOMBRE");
         	nombrePersona = new Label(a.getReceiver().getUsername());
         	nombrePersona.setFont(new Font("Arial", 24));
         	nombrePersona.setPrefHeight(60);            
@@ -146,8 +152,7 @@ public class MainChatWindows implements UIChatInterface{
         
         	chat.setOnMouseClicked(e -> {
                 ejecutarChat((Chat)a, e);
-            });
-        	scrollChat.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);    	 
+            });   	 
         	chat.add(nombrePersona, 0, 0);
         	gridChats.add(chat, 0, nRow);
         	nRow++;
@@ -156,7 +161,8 @@ public class MainChatWindows implements UIChatInterface{
     
     @Override
 	public void updateDisplay() {
-    	cargarGeneral();
+    	gridChats.getChildren().clear();
+    	gridOnline.getChildren().clear();
     	cargarChats();
 		cargarConectados();
 	}

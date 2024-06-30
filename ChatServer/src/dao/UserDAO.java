@@ -135,7 +135,6 @@ public class UserDAO {
 
 			while (r.next()) {
 				String nombre = r.getString("USERNAME");
-				System.out.println(nombre);
 				boolean online = r.getBoolean("ONLINE");
 				User temp = new User(nombre);
 				temp.setOnline(online);

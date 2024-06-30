@@ -80,7 +80,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 	@Override
 	public ArrayList<PrivateChat> getPrivateChats(User u) throws RemoteException{
 		ChatDAO dao = new ChatDAO();
-		return dao.getPrivateChat(u);
+		ArrayList<PrivateChat> a = dao.getPrivateChat(u);
+		System.out.println("Tamaño de a en chatserver " + a.size());
+		return a;
 	}
 
 	@Override
@@ -88,10 +90,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 		ChatDAO dao = new ChatDAO();
 		dao.sendMessage(m, receiver);
 		if (receiver == null) { //va al chat grupal
-			//Thread t = new Thread(() -> {
 				for(Suscriber s : this.suscribers){
 					try {
-						System.out.println(s.getPort());
 						Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
 						ChatsObserver sub = (ChatsObserver)reg.lookup("client");
 						sub.receiveGroupMessage(m);
@@ -99,16 +99,13 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 						e.printStackTrace();
 					}
 				}				
-				
-			//});
-			//t.start();
 		}
 		else{ //chat dm
 			for(Suscriber s : this.suscribers){
 				Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
 				ChatsObserver sub = null;
 				try {
-				sub = (ChatsObserver)reg.lookup("client");
+					sub = (ChatsObserver)reg.lookup("client");
 				}catch(Exception e) {
 					e.printStackTrace();
 				}

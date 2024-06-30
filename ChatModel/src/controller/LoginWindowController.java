@@ -67,7 +67,6 @@ public class LoginWindowController {
     void initialize() {
         assert login_BTN != null : "fx:id=\"login_BTN\" was not injected: check your FXML file 'LoginWindow.fxml'.";
         assert nombreUsuario_TXTF != null : "fx:id=\"nombreUsuario_TXTF\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        //f = Facade.getInstance();
         alert = new Alert(AlertType.WARNING);
     }
 

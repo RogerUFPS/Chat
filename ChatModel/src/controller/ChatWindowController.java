@@ -73,7 +73,7 @@ public class ChatWindowController implements UIChatInterface {
 		f.setController2(this);
         scrollChat.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-		//loadDisplay();
+		loadDisplay();
 	}
 
 	private void setChat() {
@@ -84,39 +84,40 @@ public class ChatWindowController implements UIChatInterface {
 	public void updateDisplay() {
 		GridPane msg = new GridPane();
 		Label text;
+		chat = DataTransfer.getInstance().getChat();
+		Message m = null;
+		if(chat.getMessages().size() > 0){
+			m = chat.getMessages().get(0);
+			if (m.getSender().equals(f.getUser())) {
+				msg.setAlignment(Pos.BASELINE_RIGHT);
+			} else {
+				msg.setAlignment(Pos.BASELINE_LEFT);
+			}
+			//String date = m.getDate().getDay() + m.getDate().getHours() + m.getDate().getMinutes() + "";
+			
+			text = new Label(m.getSender().getUsername() + ": " + m.getMessage());
+			
+			text.setFont(new Font("Monospace", 12));
+			int height = 17;
 
-		Message m = chat.getMessages().get(chat.getMessages().size()-1);
+			if(text.getText().length()%17 == 0) {
+				height = (text.getText().length()/17)*17;
+			}
+			
+			text.setWrapText(true);
+			text.setPrefHeight(height);
+			text.setMinHeight(height);
+			text.setMaxHeight(height);
+			
+			msg.setPrefHeight(height);
+			msg.setMinHeight(height);
+			msg.setMaxHeight(height);
 
-		if (m.getSender().equals(f.getUser())) {
-			msg.setAlignment(Pos.BASELINE_RIGHT);
-		} else {
-			msg.setAlignment(Pos.BASELINE_LEFT);
+			msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
+			msg.add(text, 0, nRow);
+			chatGrid.add(msg, 0, nRow);
+			nRow++;
 		}
-				
-		String date = m.getDate().getDay() + m.getDate().getHours() + m.getDate().getMinutes() + "";
-		
-		text = new Label(date + " " + m.getSender().getUsername() + ": " + m.getMessage());
-		
-		text.setFont(new Font("Monospace", 12));
-		int height = 17;
-
-		if(text.getText().length()%17 == 0) {
-			height = (text.getText().length()/17)*17;
-		}
-		
-		text.setWrapText(true);
-		text.setPrefHeight(height);
-		text.setMinHeight(height);
-		text.setMaxHeight(height);
-		
-		msg.setPrefHeight(height);
-		msg.setMinHeight(height);
-		msg.setMaxHeight(height);
-
-		msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
-		msg.add(text, 0, nRow);
-		chatGrid.add(msg, 0, nRow);
-		nRow++;
 	}
 
 	public void loadDisplay(){
@@ -124,22 +125,32 @@ public class ChatWindowController implements UIChatInterface {
     	for(Message h: chat.getMessages()) {
     		GridPane msg = new GridPane();
     	    Label text;
-
-            text = new Label(h.getMessage());
-    	
-            if(chat.getMessages().get(chat.getMessages().size()-1).getSender().equals(f.getUser())){    		
-                msg.setAlignment(Pos.BASELINE_LEFT);
-            } else {
+            text = new Label(h.getSender().getUsername() + ":"+ h.getMessage());
+                        
+            User sender = h.getSender();
+            
+            if(sender.equals(f.getUser()) ){    		
                 msg.setAlignment(Pos.BASELINE_RIGHT);
+            } else {
+                msg.setAlignment(Pos.BASELINE_LEFT);
             }
             
             text.setFont(new Font("Monospace", 12));
-    		
-    		int height = (text.getText().length()/12)*20;
-    		
-    		text.setPrefHeight(height);
-    		text.setMinHeight(height);
-    		text.setMaxHeight(height);
+			int height = 17;
+
+			if(text.getText().length()%17 == 0) {
+				height = (text.getText().length()/17)*17;
+			}
+			
+			text.setWrapText(true);
+			text.setPrefHeight(height);
+			text.setMinHeight(height);
+			text.setMaxHeight(height);
+			
+			msg.setPrefHeight(height);
+			msg.setMinHeight(height);
+			msg.setMaxHeight(height);
+
     	
             msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
             msg.add(text, 0, nRow);

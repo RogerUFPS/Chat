@@ -23,7 +23,7 @@ public abstract class Chat implements Serializable{
 	}
 
 	public void sendMessage(Message message){
-        this.messages.add(message);
+        this.messages.add(0, message);
     }
 
     

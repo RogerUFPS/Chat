@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-public class Message implements Serializable{
+public class Message implements Serializable, Comparable<Object>{
     /**
 	 * 
 	 */
@@ -47,5 +47,22 @@ public class Message implements Serializable{
     public void setOrder(int order){
         this.order = order;
     }
+
+	@Override
+	public int compareTo(Object o) {
+		
+		if(o instanceof Message) {	
+			Message x = (Message)o;
+			if(this.getOrder()<x.getOrder()) {
+				return 1;
+			} else if(this.getOrder()>x.getOrder()) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+		
+		return 0;
+	}
 
 }

@@ -14,26 +14,26 @@ public class MainClient extends Application{
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			
-			Pane root = (Pane) FXMLLoader.load(getClass().getResource("LoginWindow.fxml"));
-			
-			Scene scene = new Scene(root);
-						
-			primaryStage.setResizable(false);
-			primaryStage.setScene(scene);	
-			primaryStage.show();
-			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-				public void handle(WindowEvent arg0) {
-					Facade f = Facade.getInstance();
-					f.disconnectUser();
-					System.exit(0);
-				}	
-			});
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+				
+				Pane root = (Pane) FXMLLoader.load(getClass().getResource("LoginWindow.fxml"));
+				
+				Scene scene = new Scene(root);
+							
+				primaryStage.setResizable(false);
+				primaryStage.setScene(scene);	
+				primaryStage.show();
+				primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+	
+					public void handle(WindowEvent arg0) {
+						Facade f = Facade.getInstance();
+						f.disconnectUser();
+						System.exit(0);
+					}	
+				});
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 	}
 	
 	public static void main(String[] args) {

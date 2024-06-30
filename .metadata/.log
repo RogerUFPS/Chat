@@ -9893,3 +9893,39 @@ java.nio.file.FileSystemException: C:\Users\Roger\Documents\Universidad\Programa
 
 !ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 17:35:21.477
 !MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 18:36:18.382
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 18:36:18.383
+!MESSAGE The CodeTogether Live session closed unexpectedly, trying to reconnect.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 18:36:19.678
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 19:36:27.998
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 19:36:28.000
+!MESSAGE The CodeTogether Live session closed unexpectedly, trying to reconnect.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 19:36:29.226
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 2 0 2024-06-29 20:35:12.618
+!MESSAGE A low-level error has occurred in CodeTogether
+!STACK 0
+java.util.ConcurrentModificationException
+	at java.base/java.util.HashMap$HashIterator.nextNode(HashMap.java:1597)
+	at java.base/java.util.HashMap$KeyIterator.next(HashMap.java:1620)
+	at com.genuitec.eclipse.codetogether.services.RoomService.lambda$8(RoomService.java:296)
+	at com.genuitec.eclipse.codetogether.comms.RpcWorkerPool$1.run(RpcWorkerPool.java:23)
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 20:37:13.707
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 20:37:13.709
+!MESSAGE The CodeTogether Live session closed unexpectedly, trying to reconnect.
+
+!ENTRY com.genuitec.eclipse.codetogether.ui 1 0 2024-06-29 20:37:15.109
+!MESSAGE Connection closed with CodeTogether backend: Normal closure.

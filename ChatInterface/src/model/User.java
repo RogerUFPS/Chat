@@ -36,6 +36,6 @@ public class User implements Serializable{
 		if(!(other instanceof User))
 			return false;
 		User o = (User)other;
-		return this.username.equalsIgnoreCase(o.getUsername());
+		return this.username.trim().equalsIgnoreCase(o.getUsername().trim());
 	}
 }
