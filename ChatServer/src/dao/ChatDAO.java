@@ -143,18 +143,32 @@ public class ChatDAO{
 			}
 		}
 		
-		for(PrivateChat pc : privateChats){
-			for(int j = 0; j < pc.getMessages().size()-2; j++){
-				for(int i = 0; i < pc.getMessages().size()-1; i++){
-					int c = pc.getMessages().get(i).compareTo(pc.getMessages().get(i+1));
-					if(c < 0){
-						Message temp = pc.getMessages().get(i);
-						pc.getMessages().set(i, pc.getMessages().get(i+1));
-						pc.getMessages().set(i+1, temp);
-					}
-				}
-			}
+		for (PrivateChat pc : privateChats) {
+		    for (int j = 0; j < pc.getMessages().size() - 1; j++) {
+		        for (int i = 0; i < pc.getMessages().size() - 1 - j; i++) {
+		            int c = pc.getMessages().get(i).compareTo(pc.getMessages().get(i + 1));
+		            if (c < 0) { // Cambio a <0 para ordenar en orden descendente, si se quiere ascendente cambiar a >0
+		                Message temp = pc.getMessages().get(i);
+		                pc.getMessages().set(i, pc.getMessages().get(i + 1));
+		                pc.getMessages().set(i + 1, temp);
+		            }
+		        }
+		    }
 		}
+//Este bubblesort le falta algo, entonces lo corregi, bueno chatgpt lo corrigio XD
+//		for(PrivateChat pc : privateChats){
+//			for(int j = 0; j < pc.getMessages().size()-2; j++){
+//				for(int i = 0; i < pc.getMessages().size()-1; i++){
+//					int c = pc.getMessages().get(i).compareTo(pc.getMessages().get(i+1));
+//					if(c < 0){
+//						Message temp = pc.getMessages().get(i);
+//						pc.getMessages().set(i, pc.getMessages().get(i+1));
+//						pc.getMessages().set(i+1, temp);
+//					}
+//				}
+//			}
+//		}
+		
 		return privateChats;
 	}
 	

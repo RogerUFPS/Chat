@@ -136,16 +136,16 @@ public class ChatWindowController implements UIChatInterface {
 			msg.setMaxHeight(height);
 
 			msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
-			msg.add(text, 0, nRow);
+			msg.add(text, 0, 0);
 			chatGrid.add(msg, 0, nRow);
 			nRow++;
 		}
 	}
 
 	public void loadDisplay(){
-        
-    	for(Message h: chat.getMessages()) {
-    		GridPane msg = new GridPane();
+		for(Message h: chat.getMessages()) {
+
+			GridPane msg = new GridPane();
     	    Label text;
             text = new Label(h.getSender().getUsername() + ":"+ h.getMessage());
                         
@@ -175,11 +175,19 @@ public class ChatWindowController implements UIChatInterface {
 
     	
             msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
-            msg.add(text, 0, nRow);
+            msg.add(text, 0, 0);
             chatGrid.add(msg, 0, nRow);
             nRow++;
-    	}
+			
+		}
     	
     }
+
+	@Override
+	public void updateOnlineUsers() {
+		// TODO Auto-generated method stub
+		//Emmm mientras
+		
+	}
 
 }

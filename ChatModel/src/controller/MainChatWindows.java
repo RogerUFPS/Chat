@@ -137,9 +137,34 @@ public class MainChatWindows implements UIChatInterface {
 		ArrayList<PrivateChat> pc = f.getPrivateChatsList();
 		GridPane chat;
 		Label nombrePersona;
+
+		for (int i = 0; i < pc.size() - 1; i++) {
+		    for (int j = 0; j < pc.size() - 1 - i; j++) {
+		        PrivateChat chat1 = pc.get(j);
+		        PrivateChat chat2 = pc.get(j + 1);
+		        if (!chat1.getReceiver().getUsername().equals("null") && 
+		            !chat2.getReceiver().getUsername().equals("null") && 
+		            chat1.getMessages().size() > 0 && 
+		            chat2.getMessages().size() > 0) {
+
+		            Message lastMessageChat1 = chat1.getMessages().get(chat1.getMessages().size()-1); 
+		            Message lastMessageChat2 = chat2.getMessages().get(chat2.getMessages().size()-1); 
+		            
+		            int comparisonResult = lastMessageChat1.compareTo(lastMessageChat2);
+
+		            if (comparisonResult > 0) { // Mayor porque si tiene mayor orden es mas reciente XD
+		                PrivateChat temp = pc.get(j);
+		                pc.set(j, pc.get(j + 1));
+		                pc.set(j + 1, temp);
+		            }
+		        }
+		    }
+		}
+
 		for (PrivateChat a : pc) {
-			if(!a.getReceiver().getUsername().equals("null")) {
-				chat = new GridPane();nombrePersona = new Label(a.getReceiver().getUsername());
+			if (!a.getReceiver().getUsername().equals("null")) {
+				chat = new GridPane();
+				nombrePersona = new Label(a.getReceiver().getUsername());
 				nombrePersona.setFont(new Font("Arial", 24));
 				nombrePersona.setPrefHeight(60);
 				nombrePersona.setMinHeight(60);
@@ -182,6 +207,13 @@ public class MainChatWindows implements UIChatInterface {
 		cargarChats();
 		cargarConectados();
 
+	}
+
+	@Override
+	public void updateOnlineUsers() {
+		// TODO Auto-generated method stub
+		gridOnline.getChildren().clear();
+		cargarChats();
 	}
 
 }

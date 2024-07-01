@@ -49,16 +49,16 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 		Suscriber x = new Suscriber(ip, puerto);
 		suscribers.remove(x);
 		
-//		//Actualizamos la lista de conectados
-//		for(Suscriber n: suscribers) {
-//			try {
-//				Registry reg = LocateRegistry.getRegistry(n.getIp(), n.getPort());
-//				ChatsObserver sub = (ChatsObserver)reg.lookup("client");
-//				sub.updateDisplay();
-//			} catch(Exception e){
-//				e.printStackTrace();
-//			}
-//		}
+		//Actualizamos la lista de conectados
+		for(Suscriber n: suscribers) {
+			try {
+				Registry reg = LocateRegistry.getRegistry(n.getIp(), n.getPort());
+				ChatsObserver sub = (ChatsObserver)reg.lookup("client");
+				sub.updateOnlineUsers();
+			} catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 		
 	}
 	

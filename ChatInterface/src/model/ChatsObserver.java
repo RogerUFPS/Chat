@@ -10,4 +10,5 @@ public interface ChatsObserver extends Remote {
 	public void receiveDirectMessage(Message m) throws RemoteException;
 	public User getUser() throws RemoteException;
 	public void updateDisplay() throws RemoteException;
+	public void updateOnlineUsers() throws RemoteException;
 }

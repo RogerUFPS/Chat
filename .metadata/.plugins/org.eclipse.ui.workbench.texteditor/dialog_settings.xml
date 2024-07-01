@@ -13,6 +13,13 @@
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
 			<item value="system"/>
+			<item value="sysout"/>
+			<item value="disconnect"/>
+			<item value="disconn"/>
+			<item value="dis"/>
+			<item value="group"/>
+			<item value="direct"/>
+			<item value="receive"/>
 			<item value="g"/>
 			<item value="getUser"/>
 			<item value="holas"/>

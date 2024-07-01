@@ -9,7 +9,6 @@
     <fullyQualifiedTypeName name="model.ChatInterface"/>
     <fullyQualifiedTypeName name="dao.ChatDAO"/>
     <fullyQualifiedTypeName name="java.sql.ResultSet"/>
-    <fullyQualifiedTypeName name="model.Message"/>
     <fullyQualifiedTypeName name="java.util.Calendar"/>
     <fullyQualifiedTypeName name="dao.UserDAO"/>
     <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
@@ -54,5 +53,6 @@
     <fullyQualifiedTypeName name="java.util.List"/>
     <fullyQualifiedTypeName name="controller.ChatWindowController"/>
     <fullyQualifiedTypeName name="model.PrivateChat"/>
+    <fullyQualifiedTypeName name="model.Message"/>
     <fullyQualifiedTypeName name="model.DataTransfer"/>
 </qualifiedTypeNameHistroy>
