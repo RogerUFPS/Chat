@@ -66,6 +66,8 @@ public class ChatDAO{
 			String sqlRequest = "SELECT * FROM CHATS WHERE SENDER='" +u.getUsername()+ "' ORDER BY ORDER_IN_CHAT";
 			ResultSet r = statementOb.executeQuery(sqlRequest);
 						
+			//Creamos los chats privados
+			
 			while(r.next()) {
 				String smsg = r.getString("MESSAGE");
 				//String sSender = r.getString("SENDER");
@@ -143,6 +145,8 @@ public class ChatDAO{
 			}
 		}
 		
+		//Bublesort que ordena los mensajes en los chats privados
+		
 		for (PrivateChat pc : privateChats) {
 		    for (int j = 0; j < pc.getMessages().size() - 1; j++) {
 		        for (int i = 0; i < pc.getMessages().size() - 1 - j; i++) {
@@ -155,19 +159,6 @@ public class ChatDAO{
 		        }
 		    }
 		}
-//Este bubblesort le falta algo, entonces lo corregi, bueno chatgpt lo corrigio XD
-//		for(PrivateChat pc : privateChats){
-//			for(int j = 0; j < pc.getMessages().size()-2; j++){
-//				for(int i = 0; i < pc.getMessages().size()-1; i++){
-//					int c = pc.getMessages().get(i).compareTo(pc.getMessages().get(i+1));
-//					if(c < 0){
-//						Message temp = pc.getMessages().get(i);
-//						pc.getMessages().set(i, pc.getMessages().get(i+1));
-//						pc.getMessages().set(i+1, temp);
-//					}
-//				}
-//			}
-//		}
 		
 		return privateChats;
 	}

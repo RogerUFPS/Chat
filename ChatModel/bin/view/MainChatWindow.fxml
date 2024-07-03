@@ -16,7 +16,7 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <GridPane>
+      <GridPane style="-fx-background-color: #272947;">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -25,25 +25,35 @@
           <RowConstraints maxHeight="342.0" minHeight="10.0" prefHeight="342.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ScrollPane fx:id="scrollChat" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+            <ScrollPane fx:id="scrollChat" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #272947;" GridPane.rowIndex="1">
                <content>
-                  <GridPane fx:id="gridChats" prefHeight="339.0" prefWidth="419.0">
+                  <GridPane fx:id="gridChats" prefHeight="340.0" prefWidth="421.0" style="-fx-background-color: #272947;">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                   </GridPane>
                </content>
             </ScrollPane>
-            <Label fx:id="Chat_LBL" alignment="CENTER" prefHeight="17.0" prefWidth="422.0" text="Chats">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
+            <GridPane style="-fx-border-color: transparent transparent #39FFFA transparent;">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label fx:id="Chat_LBL" alignment="CENTER" prefHeight="38.0" prefWidth="423.0" text="Chats" textFill="#39fffa">
+                     <font>
+                        <Font name="Cascadia Code Regular" size="32.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
          </children>
       </GridPane>
-      <ScrollPane fx:id="scrollOnline" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+      <ScrollPane fx:id="scrollOnline" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #272947;" GridPane.columnIndex="1">
          <content>
-            <GridPane fx:id="gridOnline" prefHeight="394.0" prefWidth="173.0">
+            <GridPane fx:id="gridOnline" prefHeight="398.0" prefWidth="175.0" style="-fx-background-color: #272947; -fx-border-color: transparent transparent transparent #39FFFA;">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>

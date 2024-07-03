@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -61,13 +62,13 @@ public class MainChatWindows implements UIChatInterface {
 		Label nombreChat;
 		chat = new GridPane();
 		nombreChat = new Label("Chat general");
-		nombreChat.setFont(new Font("Arial", 24));
+		nombreChat.setFont(new Font("Cascadia Code", 14));
 		nombreChat.setPrefHeight(60);
 		nombreChat.setMinHeight(60);
 		nombreChat.setMaxHeight(60);
+		nombreChat.setStyle("-fx-text-fill: #39FFFA;");
 		chat.setAlignment(Pos.CENTER);
-
-		chat.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
+		chat.setStyle("-fx-border-color: transparent transparent #39FFFA transparent; -fx-border-width: 1px;");
 		chat.setOnMouseClicked(e -> {
 			ejecutarChat(f.getGroupChat(), e);
 		});
@@ -111,24 +112,24 @@ public class MainChatWindows implements UIChatInterface {
 	void cargarConectados() {
 		GridPane user;
 		Label username;
-
 		for (User s : f.loadActiveUsers()) {
 			user = new GridPane();
 			username = new Label(s.getUsername());
-			username.setFont(new Font("Monospace", 12));
+			username.setFont(new Font("Cascadia Code", 12));
 			username.setPrefHeight(20);
 			username.setMinHeight(20);
 			username.setMaxHeight(20);
+			username.setStyle("-fx-text-fill: #39FFFA;");
 			user.setPrefHeight(20);
 			user.setMaxHeight(20);
 			user.setMinHeight(20);
 			username.setAlignment(Pos.CENTER);
-			user.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
+			username.setWrapText(true);
+			user.setStyle("-fx-border-color: transparent transparent #39FFFA transparent; -fx-border-width: 2px;");
 			user.setOnMouseClicked(e -> {
 				ejecutarChat(obtenerChat(s), e);
 			});
 			user.add(username, 0, 0);
-
 			gridOnline.add(user, 0, nRowC++);
 		}
 	}
@@ -138,7 +139,8 @@ public class MainChatWindows implements UIChatInterface {
 		GridPane chat;
 		Label nombrePersona;
 
-		for (int i = 0; i < pc.size() - 1; i++) {
+		//Uso bublesort para organizar chats dependiendo de cual es el mensaje que llego despues
+		for (int i = 0; i < pc.size(); i++) {
 		    for (int j = 0; j < pc.size() - 1 - i; j++) {
 		        PrivateChat chat1 = pc.get(j);
 		        PrivateChat chat2 = pc.get(j + 1);
@@ -147,12 +149,12 @@ public class MainChatWindows implements UIChatInterface {
 		            chat1.getMessages().size() > 0 && 
 		            chat2.getMessages().size() > 0) {
 
-		            Message lastMessageChat1 = chat1.getMessages().get(chat1.getMessages().size()-1); 
-		            Message lastMessageChat2 = chat2.getMessages().get(chat2.getMessages().size()-1); 
+		            Message lastMessageChat1 = chat1.getMessages().get(0); 
+		            Message lastMessageChat2 = chat2.getMessages().get(0); 
 		            
 		            int comparisonResult = lastMessageChat1.compareTo(lastMessageChat2);
 
-		            if (comparisonResult > 0) { // Mayor porque si tiene mayor orden es mas reciente XD
+		            if (comparisonResult < 0) {
 		                PrivateChat temp = pc.get(j);
 		                pc.set(j, pc.get(j + 1));
 		                pc.set(j + 1, temp);
@@ -165,12 +167,14 @@ public class MainChatWindows implements UIChatInterface {
 			if (!a.getReceiver().getUsername().equals("null")) {
 				chat = new GridPane();
 				nombrePersona = new Label(a.getReceiver().getUsername());
-				nombrePersona.setFont(new Font("Arial", 24));
+				nombrePersona.setFont(new Font("Cascadia code", 14));
 				nombrePersona.setPrefHeight(60);
 				nombrePersona.setMinHeight(60);
 				nombrePersona.setMaxHeight(60);
+				nombrePersona.setStyle("-fx-text-fill: #39FFFA;");
+				nombrePersona.setWrapText(true);
 				chat.setAlignment(Pos.CENTER);
-				chat.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
+				chat.setStyle("-fx-border-color: transparent transparent #39FFFA transparent; -fx-border-width: 1px;");
 				chat.setOnMouseClicked(e -> {
 					ejecutarChat((Chat) a, e);
 				});
@@ -202,18 +206,10 @@ public class MainChatWindows implements UIChatInterface {
 		scrollOnline.setHbarPolicy(ScrollBarPolicy.NEVER);
 		f = Facade.getInstance();
 		dt = DataTransfer.getInstance();
-		f.setController(this);
+		f.setMainChatController(this);
 		cargarGeneral();
 		cargarChats();
 		cargarConectados();
-
-	}
-
-	@Override
-	public void updateOnlineUsers() {
-		// TODO Auto-generated method stub
-		gridOnline.getChildren().clear();
-		cargarChats();
 	}
 
 }

@@ -1,0 +1,223 @@
+package controller;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import model.Chat;
+import model.DataTransfer;
+import model.Facade;
+import model.GroupChat;
+import model.Message;
+import model.PrivateChat;
+import model.UIChatInterface;
+import model.User;
+
+public class ChatWindowController implements UIChatInterface {
+
+	@FXML
+	private ResourceBundle resources;
+
+	@FXML
+	private URL location;
+
+	@FXML
+	private GridPane chatGrid;
+	
+	@FXML
+	private Label chat_LBL;
+
+	@FXML
+	private TextArea chat_TXT_A;
+
+	@FXML
+	private ScrollPane scrollChat;
+
+	private Chat chat;
+
+	private Facade f;
+
+	private int nRow = 0;
+
+	@FXML
+    void backToMainChat(MouseEvent event) {
+		DataTransfer.getInstance().setChat(null);
+		Node node = (Node) event.getSource();
+		Stage stage = (Stage) node.getScene().getWindow();
+		stage.close();
+        try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainChatWindow.fxml"));
+			Pane root = loader.load();			
+			Scene scene = new Scene(root);
+		    stage.setScene(scene);
+		    stage.show();		    		    
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+    }
+	
+	@FXML
+	void sendMessage(MouseEvent event) {
+		String msg = chat_TXT_A.getText().trim();
+		if (msg.isBlank())
+			return;
+		User receiver = null;
+		if (chat instanceof PrivateChat) {
+			PrivateChat pc = (PrivateChat) chat;
+			receiver = pc.getReceiver();
+		}
+		f.sendMessage(msg, receiver);
+		chat_TXT_A.clear();
+	}
+
+	@FXML
+	void initialize() {
+		assert chatGrid != null : "fx:id=\"chatGrid\" was not injected: check your FXML file 'ChatWindow.fxml'.";
+		assert chat_LBL != null : "fx:id=\"chat_LBL\" was not injected: check your FXML file 'ChatWindow.fxml'.";
+		assert chat_TXT_A != null : "fx:id=\"chat_TXT_A\" was not injected: check your FXML file 'ChatWindow.fxml'.";
+		assert scrollChat != null : "fx:id=\"scrollChat\" was not injected: check your FXML file 'ChatWindow.fxml'.";
+
+        scrollChat.setFitToWidth(true);
+        scrollChat.setFitToHeight(true);
+        
+        chat_TXT_A.setWrapText(true);
+        
+        chatGrid.setMinWidth(Region.USE_COMPUTED_SIZE);
+        chatGrid.setMaxWidth(Double.MAX_VALUE);
+        chatGrid.setMinHeight(Region.USE_COMPUTED_SIZE);
+        chatGrid.setMaxHeight(Double.MAX_VALUE);
+        
+		setChat();
+		f = Facade.getInstance();
+		f.setController2(this);
+		
+		chatGrid.layout();
+	    scrollChat.layout();
+	    scrollChat.setVvalue(1.0);
+
+		loadDisplay();
+	}
+
+	private void setChat() {
+		chat = DataTransfer.getInstance().getChat();
+	}
+	
+	private void addMessageToGrid(Message m) {
+		GridPane msg = new GridPane();
+		Label name, message, date;
+		int column = 0;
+		if (m.getSender().equals(f.getUser())) {
+			msg.setAlignment(Pos.BASELINE_RIGHT);
+			column = 1;
+		} else {
+			msg.setAlignment(Pos.BASELINE_LEFT);
+			column = 0;
+		}
+		name = new Label(m.getSender().getUsername());
+		name.setFont(new Font("mono-spaced", 14));
+		name.setStyle("-fx-text-fill: #272947;");
+		name.setWrapText(true);
+		
+		message = new Label(m.getMessage());
+		message.setFont(new Font("mono-spaced", 12));
+		message.setStyle("-fx-text-fill: #272947;");
+		message.setWrapText(true);
+		
+		date = new Label(m.getDate().toString());
+		date.setFont(new Font("mono-spaced", 12));
+		date.setStyle("-fx-text-fill: #272947;");
+		date.setWrapText(true);
+		
+		VBox messageContainer = new VBox();
+		messageContainer.getChildren().addAll(name, message, date);
+        messageContainer.setSpacing(5); 
+        messageContainer.setMaxWidth(scrollChat.getWidth() * 0.6);
+        
+        //Padding*2 mas tamaño de las 3 fuentes juntas
+        int height =  58;
+        //Seteo 315 porque es el scrollChat width, ya que apenas carga la pantalla no lo toma en cuenta
+        int increment = (int) Math.ceil( (message.getText().length()*12)/(315) );
+        
+        if(increment > 0) {
+        	height+= (increment*16);
+        }    
+        messageContainer.setPrefHeight(height);
+        messageContainer.setMinHeight(height);
+        messageContainer.setMaxHeight(height);
+        
+        msg.add(messageContainer, 0, 0);
+        
+		RowConstraints rowConstraints = new RowConstraints();
+        rowConstraints.setVgrow(Priority.ALWAYS);
+        msg.getRowConstraints().addAll(rowConstraints);
+        
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.ALWAYS);
+        msg.getColumnConstraints().addAll(col1, col1);
+        
+        msg.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+        GridPane.setMargin(msg, new Insets(15));
+        msg.setStyle("-fx-background-color: #39fffa;-fx-border-radius:15;-fx-background-radius:15;");
+        msg.setPadding(new Insets(10));
+        
+		chatGrid.add(msg, column, nRow);
+		nRow++;
+		
+		chatGrid.layout();
+	    scrollChat.layout();
+	    scrollChat.setVvalue(1.0);
+	}
+	
+	@Override
+	public void updateDisplay() {
+		chat = DataTransfer.getInstance().getChat();
+		if(chat!= null && chat.getMessages().size() > 0){
+			Message m = chat.getMessages().get(0);
+			addMessageToGrid(m);
+		}
+	}
+
+	public void loadDisplay(){
+		
+		for(Message m: chat.getMessages()) {
+			addMessageToGrid(m);
+		}
+		
+//		for(int i = chat.getMessages().size();i>0;i--) {
+//			System.out.println("Entonce acá me ejecuto");
+//			addMessageToGrid(chat.getMessages().get(i));
+//		}
+    }
+
+	@Override
+	public void updateOnlineUsers() {
+		// TODO Auto-generated method stub
+		//Emmm mientras
+		
+	}
+
+}

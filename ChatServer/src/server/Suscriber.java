@@ -1,7 +1,5 @@
 package server;
 
-import model.User;
-
 public class Suscriber {
     private String ip;
     private int port;

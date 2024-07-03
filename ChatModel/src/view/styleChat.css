@@ -1,0 +1,8 @@
+.areaMessage{
+	-fx-control-inner-background:#515468; 
+	-fx-highlight-fill: #ffffff;
+	-fx-highlight-text-fill: #000000;	
+	-fx-text-fill: #ffffff; 
+	-fx-border-color: transparent;
+	-fx-font-family: 'Cascadia Code';
+}

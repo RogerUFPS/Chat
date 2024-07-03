@@ -1,5 +1,0 @@
-package model;
-
-public interface ChatInterface {
-	public void sendMessage(String mensaje);
-}

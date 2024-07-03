@@ -26,8 +26,8 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 	private ArrayList<PrivateChat> privateChats;
 
 	private static Facade instance;
-	private UIChatInterface controller;
-	private ChatWindowController controlador;
+	private UIChatInterface mainChatController;
+	private UIChatInterface chatController;
 	private int serverPort, clientPort; 
 	private String clientAddress, serverAddress;
 	
@@ -35,17 +35,14 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		super();
 		groupchat = new GroupChat();
 		privateChats = new ArrayList<PrivateChat>();
-		
-		serverAddress = "26.193.129.51";
+		serverAddress = "26.193.129.51"; //Toca poner la dirección del servidor principal siempre
 		try {
 			clientAddress = (InetAddress.getLocalHost()).getHostAddress();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 		serverPort = 1811;
-		clientPort = 2812;
-		
-		
+		clientPort = 2814;
 		try {
 			Registry registry = LocateRegistry.getRegistry(serverAddress, serverPort);
 			serverObj = (ChatInterface)(registry.lookup("server"));
@@ -68,7 +65,6 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 
 	public List<User> loadActiveUsers(){
 		try{
-			
 			List<User> list = serverObj.loadActiveUsers();
 			list.remove(this.me);
 			return list;
@@ -76,7 +72,6 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 			e.printStackTrace();
 		}
 		return null;
-		
 	}
 
 	public GroupChat getGroupChat(){
@@ -101,7 +96,7 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		me.setOnline(true);
 		boolean success =false;
 		try {
-			serverUp();
+			serverUp(); //Subimos el servidor del cliente
 			success = serverObj.createUser(this.me, (ChatsObserver)this);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -143,17 +138,14 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		msg.setDate(timestamp);
 		try {
 			if(receiver != null) {
-				serverObj.sendMessage(msg, receiver); //Prueba cuando es dm
-				getPrivateChats(); //Busca chats en bases de dato
+				serverObj.sendMessage(msg, receiver); 
+				getPrivateChats(); 
 				PrivateChat c = searchPrivateChat(receiver);
-//				if(c==null) { //Falta probarlo
-//					c=new PrivateChat();
-//					c.setReceiver(receiver);
-//					privateChats.add(c);
-//				}
+				//C no puede ser nulo ya que, busco con getPrivateChats(), lo que esta en la base de datos
+				//Y pues aunque no hubiese un chat antiguo, con serverObj.sendMessage(msg, receiver) ya creo una
 				c.sendMessage(msg);
 				DataTransfer.getInstance().setChat(c);
-				updateDisplay();		
+				updateChatDisplay();	
 			} else { 
 				serverObj.sendMessage(msg, receiver);
 			}
@@ -179,14 +171,11 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 	@Override
 	public void receiveGroupMessage(Message m) {
 		this.groupchat.sendMessage(m);
-		
 		Chat now = DataTransfer.getInstance().getChat();
-		
 		if(now instanceof PrivateChat) return;
-		
-		if(now!=null) {			
+		if(now!=null) {	
 			DataTransfer.getInstance().setChat(groupchat);
-			updateDisplay();
+			updateChatDisplay();
 		}
 		
 	}
@@ -200,28 +189,27 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 		return null;
 	}
 	
+
 	@Override
-	public void updateOnlineUsers() {
-		if(controller !=null) {
-			Platform.runLater(() -> controller.updateOnlineUsers());
-		}
-	}
-	@Override
-	public void updateDisplay() {
-		if(controller !=null) {
-			Platform.runLater(() -> controller.updateDisplay());
-		}
-		if(controlador!=null) {			
-			Platform.runLater(() -> controlador.updateDisplay());
+	public void updateMainChatDisplay() {
+		if(mainChatController !=null) {
+			Platform.runLater(() -> mainChatController.updateDisplay());
 		}
 	}
 	
-	public void setController(MainChatWindows controller) {
-		this.controller = controller;
+	@Override
+	public void updateChatDisplay() {
+		if(chatController!=null) {			
+			Platform.runLater(() -> chatController.updateDisplay());
+		}
+	}
+	
+	public void setMainChatController(UIChatInterface controller) {
+		this.mainChatController = controller;
 	}
 
-	public void setController2(ChatWindowController c){
-		this.controlador = c;
+	public void setChatController(UIChatInterface c){
+		this.chatController = c;
 	}
 
 	@Override
@@ -239,10 +227,12 @@ public class Facade extends UnicastRemoteObject implements ChatsObserver{
 			PrivateChat x = (PrivateChat)now;
 			if(chat.getReceiver().equals(x.getReceiver())) {			
 					DataTransfer.getInstance().setChat(chat);
-					updateDisplay();			
+					updateChatDisplay();
+					updateMainChatDisplay();
 			}
 		} else {
-			updateDisplay();
+			updateChatDisplay();
+			updateMainChatDisplay();
 		}
 		 
 		

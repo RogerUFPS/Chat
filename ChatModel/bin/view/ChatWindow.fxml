@@ -1,72 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="269.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ChatWindowController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="525.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ChatWindowController">
    <children>
-      <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="269.0">
+      <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="677.0" prefWidth="525.0" style="-fx-background-color: #272947;">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints maxHeight="126.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="267.0" minHeight="10.0" prefHeight="267.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="494.0" minHeight="10.0" prefHeight="490.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ScrollPane fx:id="scrollChat" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+            <ScrollPane fx:id="scrollChat" fitToHeight="true" fitToWidth="true" prefHeight="267.0" prefWidth="465.0" style="-fx-background-color: #272947;" GridPane.rowIndex="1">
                <content>
-                  <GridPane fx:id="chatGrid" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="258.0" prefWidth="265.0">
+                  <GridPane fx:id="chatGrid" style="-fx-background-color: #272947;">
                     <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                   </GridPane>
                </content>
             </ScrollPane>
-            <GridPane GridPane.rowIndex="2">
+            <GridPane style="-fx-border-color: #39FFFA transparent transparent transparent;" GridPane.rowIndex="2">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="211.0" minWidth="10.0" prefWidth="201.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="10.0" prefWidth="68.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="463.0" minWidth="10.0" prefWidth="454.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="0.0" prefWidth="69.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <TextArea fx:id="chat_TXT_A" prefHeight="81.0" prefWidth="359.0">
+                  <TextArea fx:id="chat_TXT_A" onKeyPressed="#sendMessageEvent" prefHeight="81.0" prefWidth="359.0" styleClass="areaMessage" stylesheets="@styleChat.css">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </GridPane.margin>
                   </TextArea>
-                  <Button mnemonicParsing="false" onAction="#sendMessage" prefHeight="25.0" prefWidth="89.0" text="Enviar" GridPane.columnIndex="1">
+                  <ImageView fitHeight="45.0" fitWidth="43.0" onMousePressed="#sendMessage" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                     <image>
+                        <Image url="@imagenes/sendMessage.png" />
+                     </image>
                      <GridPane.margin>
-                        <Insets right="5.0" />
+                        <Insets />
                      </GridPane.margin>
-                  </Button>
+                  </ImageView>
                </children>
             </GridPane>
-            <GridPane>
+            <GridPane style="-fx-border-color: transparent transparent #39FFFA transparent;">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="330.0" minWidth="0.0" prefWidth="99.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="0.0" prefWidth="424.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label fx:id="chat_LBL" alignment="CENTER" prefHeight="17.0" prefWidth="41.0" text="Chat" GridPane.columnIndex="1" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#backToMainChat" prefHeight="25.0" prefWidth="53.0" text="Atras" textAlignment="CENTER">
+                  <Label fx:id="chat_LBL" alignment="CENTER" prefHeight="30.0" prefWidth="439.0" text="Chat" textFill="#39fffa" GridPane.columnIndex="1">
+                     <font>
+                        <Font name="Cascadia Code Regular" size="25.0" />
+                     </font></Label>
+                  <ImageView fitHeight="37.0" fitWidth="14.0" onMouseClicked="#backToMainChat" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@imagenes/back.png" />
+                     </image>
                      <GridPane.margin>
-                        <Insets left="10.0" />
+                        <Insets left="50.0" />
                      </GridPane.margin>
-                  </Button>
+                  </ImageView>
                </children>
             </GridPane>
          </children>

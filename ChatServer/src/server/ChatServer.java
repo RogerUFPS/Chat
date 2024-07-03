@@ -47,14 +47,13 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 		UserDAO dao = new UserDAO();
 		dao.disconnectUser(u);
 		Suscriber x = new Suscriber(ip, puerto);
-		suscribers.remove(x);
-		
+		suscribers.remove(x); //Como tiene un equals, pues elimina al suscriptor correspondiente
 		//Actualizamos la lista de conectados
 		for(Suscriber n: suscribers) {
 			try {
 				Registry reg = LocateRegistry.getRegistry(n.getIp(), n.getPort());
 				ChatsObserver sub = (ChatsObserver)reg.lookup("client");
-				sub.updateOnlineUsers();
+				sub.updateMainChatDisplay();
 			} catch(Exception e){
 				e.printStackTrace();
 			}
@@ -75,13 +74,13 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 		return success;
 	}
 	
-	public void notifyNewOnlineUsers() {
+	private void notifyNewOnlineUsers() {
 		for(Suscriber s : this.suscribers){
 			try {
 				Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
 				ChatsObserver sub = null;
 				sub = (ChatsObserver)reg.lookup("client");
-				sub.updateDisplay();
+				sub.updateMainChatDisplay(); //Con esto actualizamos la lista de usuarios activos
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -100,7 +99,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 	public void sendMessage(Message m, User receiver) throws RemoteException{
 		ChatDAO dao = new ChatDAO();
 		dao.sendMessage(m, receiver);
-		if (receiver == null) { //va al chat grupal
+		if (receiver == null) { //Chat grupal
 				for(Suscriber s : this.suscribers){
 					try {
 						Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
@@ -111,7 +110,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatInterface, Se
 					}
 				}				
 		}
-		else{ //chat dm
+		else{ //Chat dm
 			for(Suscriber s : this.suscribers){
 				Registry reg = LocateRegistry.getRegistry(s.getIp(), s.getPort());
 				ChatsObserver sub = null;

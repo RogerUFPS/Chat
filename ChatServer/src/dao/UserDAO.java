@@ -22,7 +22,7 @@ public class UserDAO {
 		}
 	}
 
-	public boolean addUser(User u) { // falta verificar que no hayan nombres repetidos
+	public boolean addUser(User u) {
 		boolean success = false;
 		if (exists(u) && isUserOnline(u)) {
 			System.out.println("Este usuario ya esta conectado");
@@ -130,9 +130,7 @@ public class UserDAO {
 		ArrayList<User> list = new ArrayList<User>();
 		try {
 			Statement statementOb = con.createStatement();
-
 			ResultSet r = statementOb.executeQuery("SELECT * FROM USERS WHERE ONLINE = TRUE");
-
 			while (r.next()) {
 				String nombre = r.getString("USERNAME");
 				boolean online = r.getBoolean("ONLINE");
@@ -156,7 +154,7 @@ public class UserDAO {
 		try {
 			Statement statementOb = con.createStatement();
 
-			String sqlString = "UPDATE USERS SET ONLINE = FALSE";
+			String sqlString = "UPDATE USERS SET ONLINE = FALSE WHERE USERNAME='"+u.getUsername()+"'";
 
 			statementOb.executeUpdate(sqlString);
 		} catch (Exception e) {

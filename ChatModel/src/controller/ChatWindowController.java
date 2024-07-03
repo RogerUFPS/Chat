@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,10 +17,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.Chat;
 import model.DataTransfer;
 import model.Facade;
@@ -37,7 +50,7 @@ public class ChatWindowController implements UIChatInterface {
 
 	@FXML
 	private GridPane chatGrid;
-
+	
 	@FXML
 	private Label chat_LBL;
 
@@ -54,7 +67,7 @@ public class ChatWindowController implements UIChatInterface {
 	private int nRow = 0;
 
 	@FXML
-    void backToMainChat(ActionEvent event) {
+    void backToMainChat(MouseEvent event) {
 		DataTransfer.getInstance().setChat(null);
 		Node node = (Node) event.getSource();
 		Stage stage = (Stage) node.getScene().getWindow();
@@ -71,7 +84,11 @@ public class ChatWindowController implements UIChatInterface {
     }
 	
 	@FXML
-	void sendMessage(ActionEvent event) {
+	void sendMessage(MouseEvent event) {
+		sendMessage();
+	}
+	
+	private void sendMessage() {
 		String msg = chat_TXT_A.getText().trim();
 		if (msg.isBlank())
 			return;
@@ -81,7 +98,15 @@ public class ChatWindowController implements UIChatInterface {
 			receiver = pc.getReceiver();
 		}
 		f.sendMessage(msg, receiver);
+		chat_TXT_A.clear();	
 	}
+	
+	@FXML
+    void sendMessageEvent(KeyEvent event) {
+		if(event.getCode() == KeyCode.ENTER) {
+			sendMessage();
+		}
+    }
 
 	@FXML
 	void initialize() {
@@ -90,104 +115,110 @@ public class ChatWindowController implements UIChatInterface {
 		assert chat_TXT_A != null : "fx:id=\"chat_TXT_A\" was not injected: check your FXML file 'ChatWindow.fxml'.";
 		assert scrollChat != null : "fx:id=\"scrollChat\" was not injected: check your FXML file 'ChatWindow.fxml'.";
 
+        scrollChat.setFitToWidth(true);
+        scrollChat.setFitToHeight(true);
+        
+        chat_TXT_A.setWrapText(true);
+        
+        chatGrid.setMinWidth(Region.USE_COMPUTED_SIZE);
+        chatGrid.setMaxWidth(Double.MAX_VALUE);
+        chatGrid.setMinHeight(Region.USE_COMPUTED_SIZE);
+        chatGrid.setMaxHeight(Double.MAX_VALUE);
+                
 		setChat();
 		f = Facade.getInstance();
-		f.setController2(this);
-        scrollChat.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-		loadDisplay();
+		f.setChatController(this);
+		Platform.runLater(() -> {
+	        loadDisplay();
+	    });
 	}
 
 	private void setChat() {
 		chat = DataTransfer.getInstance().getChat();
 	}
+	
+	private void addMessageToGrid(Message m) {
+		GridPane msg = new GridPane();
+		Label name, message, date;
+		int column = 0;
+		if (m.getSender().equals(f.getUser())) {
+			msg.setAlignment(Pos.BASELINE_RIGHT);
+			column = 1;
+		} else {
+			msg.setAlignment(Pos.BASELINE_LEFT);
+			column = 0;
+		}
+		name = new Label(m.getSender().getUsername());
+		name.setFont(new Font("mono-spaced", 14));
+		name.setStyle("-fx-text-fill: #272947;");
+		name.setWrapText(true);
+		
+		message = new Label(m.getMessage());
+		message.setFont(new Font("mono-spaced", 12));
+		message.setStyle("-fx-text-fill: #272947;");
+		message.setWrapText(true);
+		
+		date = new Label(m.getDate().toString());
+		date.setFont(new Font("mono-spaced", 12));
+		date.setStyle("-fx-text-fill: #272947;");
+		date.setWrapText(true);
+		
+		VBox messageContainer = new VBox();
+		messageContainer.getChildren().addAll(name, message, date);
+        messageContainer.setSpacing(5); 
+        messageContainer.setMaxWidth(scrollChat.getWidth() * 0.6);
+        
+        int height =  58;
 
+        int increment = (int) Math.ceil( (message.getText().length()*12)/(scrollChat.getWidth()*0.6) );
+        if(increment > 0) {
+        	height+= (increment*16);
+        }    
+        
+        messageContainer.setPrefHeight(height);
+        messageContainer.setMinHeight(height);
+        messageContainer.setMaxHeight(height);
+        
+        msg.add(messageContainer, 0, 0);
+        
+		RowConstraints rowConstraints = new RowConstraints();
+        rowConstraints.setVgrow(Priority.ALWAYS);
+        msg.getRowConstraints().addAll(rowConstraints);
+        
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.ALWAYS);
+        msg.getColumnConstraints().addAll(col1, col1);
+        
+        msg.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+        GridPane.setMargin(msg, new Insets(15));
+        msg.setStyle("-fx-background-color: #39fffa;-fx-border-radius:15;-fx-background-radius:15;");
+        msg.setPadding(new Insets(10));
+        
+		chatGrid.add(msg, column, nRow);
+		nRow++;
+		
+		chatGrid.layout();
+	    scrollChat.layout();
+	    scrollChat.setVvalue(1.0);
+	}
+	
 	@Override
 	public void updateDisplay() {
-		GridPane msg = new GridPane();
-		Label text;
 		chat = DataTransfer.getInstance().getChat();
-		Message m = null;
 		if(chat!= null && chat.getMessages().size() > 0){
-			m = chat.getMessages().get(0);
-			if (m.getSender().equals(f.getUser())) {
-				msg.setAlignment(Pos.BASELINE_RIGHT);
-			} else {
-				msg.setAlignment(Pos.BASELINE_LEFT);
-			}
-			//String date = m.getDate().getDay() + m.getDate().getHours() + m.getDate().getMinutes() + "";
-			
-			text = new Label(m.getSender().getUsername() + ": " + m.getMessage());
-			
-			text.setFont(new Font("Monospace", 12));
-			int height = 17;
-
-			if(text.getText().length()%17 == 0) {
-				height = (text.getText().length()/17)*17;
-			}
-			
-			text.setWrapText(true);
-			text.setPrefHeight(height);
-			text.setMinHeight(height);
-			text.setMaxHeight(height);
-			
-			msg.setPrefHeight(height);
-			msg.setMinHeight(height);
-			msg.setMaxHeight(height);
-
-			msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
-			msg.add(text, 0, 0);
-			chatGrid.add(msg, 0, nRow);
-			nRow++;
+			Message m = chat.getMessages().get(0);
+			addMessageToGrid(m);
 		}
 	}
 
 	public void loadDisplay(){
-		for(Message h: chat.getMessages()) {
-
-			GridPane msg = new GridPane();
-    	    Label text;
-            text = new Label(h.getSender().getUsername() + ":"+ h.getMessage());
-                        
-            User sender = h.getSender();
-            
-            if(sender.equals(f.getUser()) ){    		
-                msg.setAlignment(Pos.BASELINE_RIGHT);
-            } else {
-                msg.setAlignment(Pos.BASELINE_LEFT);
-            }
-            
-            text.setFont(new Font("Monospace", 12));
-			int height = 17;
-
-			if(text.getText().length()%17 == 0) {
-				height = (text.getText().length()/17)*17;
-			}
-			
-			text.setWrapText(true);
-			text.setPrefHeight(height);
-			text.setMinHeight(height);
-			text.setMaxHeight(height);
-			
-			msg.setPrefHeight(height);
-			msg.setMinHeight(height);
-			msg.setMaxHeight(height);
-
-    	
-            msg.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 2px;");
-            msg.add(text, 0, 0);
-            chatGrid.add(msg, 0, nRow);
-            nRow++;
-			
+		chatGrid.getChildren().clear();
+		chat = DataTransfer.getInstance().getChat();
+		for(int i = chat.getMessages().size()-1;i>=0;i--) {
+			Message m = chat.getMessages().get(i);
+			addMessageToGrid(m);
 		}
-    	
-    }
 
-	@Override
-	public void updateOnlineUsers() {
-		// TODO Auto-generated method stub
-		//Emmm mientras
-		
-	}
+    }
 
 }
